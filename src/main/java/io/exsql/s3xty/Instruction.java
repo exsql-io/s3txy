@@ -6,20 +6,28 @@ public record Instruction(OperationCode operation, Value[] operands) {
         return new Instruction(OperationCode.HALT, null);
     }
 
-    public  static Instruction load(final Value value) {
+    public static Instruction load(final Value value) {
         return new Instruction(OperationCode.LOAD, new Value[]{value});
-    }
-
-    public  static Instruction equal() {
-        return new Instruction(OperationCode.EQUAL, null);
     }
 
     public static Instruction getField() {
         return new Instruction(OperationCode.GET_FIELD, null);
     }
 
-    public  static Instruction longEqual() {
+    public static Instruction longEqual() {
         return new Instruction(OperationCode.LONG_EQ, null);
+    }
+
+    public static Instruction stringEqual() {
+        return new Instruction(OperationCode.STRING_EQ, null);
+    }
+
+    public static Instruction doubleEqual() {
+        return new Instruction(OperationCode.DOUBLE_EQ, null);
+    }
+
+    public static Instruction booleanEqual() {
+        return new Instruction(OperationCode.BOOLEAN_EQ, null);
     }
 
     @Override

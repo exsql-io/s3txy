@@ -1,21 +1,23 @@
 package io.exsql.s3xty;
 
-import org.jetbrains.annotations.NotNull;
-
 public record BooleanValue(boolean wrapped) implements Value {
+    @Override
+    public long toLong() {
+        return wrapped ? 1 : 0;
+    }
 
     @Override
-    public int compareTo(final @NotNull Value o) {
-        if (o instanceof BooleanValue) {
-            return Boolean.compare(this.wrapped, ((BooleanValue) o).wrapped);
-        }
+    public double toDouble() {
+        return wrapped ? 1 : 0;
+    }
 
-        return -1;
+    @Override
+    public boolean toBoolean() {
+        return this.wrapped;
     }
 
     @Override
     public String toString() {
         return String.format("boolean(%s)", this.wrapped);
     }
-
 }

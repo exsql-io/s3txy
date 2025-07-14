@@ -1,11 +1,6 @@
 package io.exsql.s3xty;
 
-public record LongValue(long wrapped) implements Value {
-    @Override
-    public long toLong() {
-        return this.wrapped;
-    }
-
+public record DoubleValue(double wrapped) implements Value {
     @Override
     public double toDouble() {
         return this.wrapped;
@@ -18,6 +13,6 @@ public record LongValue(long wrapped) implements Value {
 
     @Override
     public String toString() {
-        return String.format("long(%d)", this.wrapped);
+        return String.format("double(%d)", this.wrapped);
     }
 }

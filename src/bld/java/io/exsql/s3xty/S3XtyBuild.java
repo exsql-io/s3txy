@@ -17,6 +17,9 @@ public class S3XtyBuild extends Project {
 
         downloadSources = true;
         repositories = List.of(MAVEN_CENTRAL, RIFE2_RELEASES);
+        scope(compile)
+                .include(dependency("it.unimi.dsi", "fastutil", version(8, 5, 16)));
+
         scope(provided)
                 .include(dependency("org.apache.spark", "spark-sql_2.13", version(3,5,6)));
 
