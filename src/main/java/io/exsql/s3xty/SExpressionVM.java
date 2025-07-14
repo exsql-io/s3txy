@@ -1,8 +1,12 @@
 package io.exsql.s3xty;
 
 import org.apache.spark.sql.types.DataTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SExpressionVM {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(SExpressionVM.class);
 
     public static final int DEFAULT_STACK_SIZE = 256;
 
@@ -13,6 +17,10 @@ public final class SExpressionVM {
     public SExpressionVM() {}
 
     public void evaluate(final Program program, final CachedValueBag bag) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Evaluating: \n{}", program);
+        }
+
         Value register1;
         Value register2;
 
@@ -71,6 +79,10 @@ public final class SExpressionVM {
                     register1 = pop(); // left operand
                     register2 = pop(); // right operand
                     push(Value.booleanValue(((StringValue) register1).wrapped().equals(((StringValue) register2).wrapped())));
+                    break;
+                case NOT:
+                    register1 = pop();
+                    push(Value.booleanValue(!((BooleanValue) register1).wrapped()));
                     break;
                 case HALT:
                     return;

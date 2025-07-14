@@ -11,4 +11,6 @@ public enum OperationCode {
     LONG_EQ,
     DOUBLE_EQ,
     STRING_EQ,
+    // Combining Operations
+    NOT,
 }

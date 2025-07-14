@@ -30,6 +30,10 @@ public record Instruction(OperationCode operation, Value[] operands) {
         return new Instruction(OperationCode.BOOLEAN_EQ, null);
     }
 
+    public static Instruction not() {
+        return new Instruction(OperationCode.NOT, null);
+    }
+    
     @Override
     public String toString() {
         var operandsToString = new StringBuilder();

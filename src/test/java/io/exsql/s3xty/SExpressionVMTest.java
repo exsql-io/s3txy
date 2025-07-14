@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SExpressionVMTest {
@@ -60,6 +61,46 @@ public class SExpressionVMTest {
 
         vm.evaluate(Compiler.compile(schema, "(trait-eq \"boolean\" \"true\")"), bag);
         assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyNotTraitEqLong() throws IOException {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(not (trait-eq \"long\" \"1\"))"), bag);
+        assertFalse(vm.result());
+    }
+
+    @Test
+    void verifyNotTraitEqString() throws IOException {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(not (trait-eq \"string\" \"string\"))"), bag);
+        assertFalse(vm.result());
+    }
+
+    @Test
+    void verifyNotTraitEqDouble() throws IOException {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(not (trait-eq \"double\" \"1.5\"))"), bag);
+        assertFalse(vm.result());
+    }
+
+    @Test
+    void verifyNotTraitEqBoolean() throws IOException {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(not (trait-eq \"boolean\" \"true\"))"), bag);
+        assertFalse(vm.result());
     }
 
 }

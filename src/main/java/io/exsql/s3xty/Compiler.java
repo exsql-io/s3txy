@@ -49,19 +49,26 @@ public final class Compiler {
     private static void parseExpression(final StreamTokenizer tokens, final List<Instruction> instructions, final StructType schema) throws IOException {
         switch (tokens.nextToken()) {
             case StreamTokenizer.TT_WORD:
-                if ("trait-eq".equals(tokens.sval)) {
-                    var dataType = parseGetField(tokens, instructions, schema); // parse the get field operation
-                    parseArgument(tokens, instructions, dataType); // parse the constant value to check against
+                switch (tokens.sval) {
+                    case "trait-eq":
+                        var dataType = parseGetField(tokens, instructions, schema); // parse the get field operation
+                        parseArgument(tokens, instructions, dataType); // parse the constant value to check against
 
-                    if (dataType.equals(DataTypes.LongType)) {
-                        instructions.add(Instruction.longEqual());
-                    } else if (dataType.equals(DataTypes.DoubleType)) {
-                        instructions.add(Instruction.doubleEqual());
-                    } else if (dataType.equals(DataTypes.BooleanType)) {
-                        instructions.add(Instruction.booleanEqual());
-                    } else {
-                        instructions.add(Instruction.stringEqual());
-                    }
+                        if (dataType.equals(DataTypes.LongType)) {
+                            instructions.add(Instruction.longEqual());
+                        } else if (dataType.equals(DataTypes.DoubleType)) {
+                            instructions.add(Instruction.doubleEqual());
+                        } else if (dataType.equals(DataTypes.BooleanType)) {
+                            instructions.add(Instruction.booleanEqual());
+                        } else {
+                            instructions.add(Instruction.stringEqual());
+                        }
+                        break;
+                    case "not":
+                        tokens.nextToken(); // skip "not"
+                        parseExpression(tokens, instructions, schema);
+                        instructions.add(Instruction.not());
+                        break;
                 }
                 break;
         }
