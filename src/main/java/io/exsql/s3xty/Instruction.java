@@ -22,4 +22,19 @@ public record Instruction(OperationCode operation, Value[] operands) {
         return new Instruction(OperationCode.LONG_EQ, null);
     }
 
+    @Override
+    public String toString() {
+        var operandsToString = new StringBuilder();
+        if (this.operands != null) {
+            for (int i = 0; i < this.operands.length; i++) {
+                operandsToString.append(this.operands[i]);
+                if (i > 0) {
+                    operandsToString.append(", ");
+                }
+            }
+        }
+
+        return String.format("%s(%s)", this.operation, operandsToString);
+    }
+
 }

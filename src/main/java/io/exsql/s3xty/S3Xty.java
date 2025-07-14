@@ -11,6 +11,7 @@ public class S3Xty {
         var vm = new SExpressionVM();
         try {
             var program = Compiler.compile(StructType.fromDDL(args[0]), args[1]);
+            System.out.println(program);
 
             var stopWatch = Stopwatch.createStarted();
             var row = new GenericRow(new Object[]{1L});
