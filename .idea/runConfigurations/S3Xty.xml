@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="S3Xty" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="io.exsql.s3xty.S3Xty" />
+    <module name="app" />
+    <option name="PROGRAM_PARAMETERS" value="&quot;long LONG&quot; &quot;(trait-eq \&quot;long\&quot; \&quot;1\&quot;)&quot;" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
