@@ -24,18 +24,10 @@ public final class Compiler {
     public static Program compile(final StructType schema, final String expression) throws IOException {
         var stopWatch = Stopwatch.createStarted();
         var tokens = new StreamTokenizer(new StringReader(expression));
-        tokens.ordinaryChar('(');
-        tokens.ordinaryChar(')');
 
         var instructions = new ArrayList<Instruction>();
         while (tokens.nextToken() != StreamTokenizer.TT_EOF) {
-            switch (tokens.ttype) {
-                case '(':
-                    parseExpression(tokens, instructions, schema);
-                    break;
-                case ')':
-                    break;
-            }
+            parseExpression(tokens, instructions, schema);
         }
 
         instructions.add(Instruction.halt());
@@ -47,36 +39,102 @@ public final class Compiler {
     }
 
     private static void parseExpression(final StreamTokenizer tokens, final List<Instruction> instructions, final StructType schema) throws IOException {
-        switch (tokens.nextToken()) {
-            case StreamTokenizer.TT_WORD:
-                switch (tokens.sval) {
-                    case "trait-eq":
-                        var dataType = parseGetField(tokens, instructions, schema); // parse the get field operation
-                        parseArgument(tokens, instructions, dataType); // parse the constant value to check against
+        tokens.nextToken(); // skip (
+        switch (tokens.sval) {
+            case Keywords.NOT:
+                tokens.nextToken(); // skip "not"
+                parseExpression(tokens, instructions, schema);
+                instructions.add(Instruction.not());
+                break;
+            case Keywords.OR:
+                tokens.nextToken(); // skip "or"
+                parseExpression(tokens, instructions, schema);
+                parseExpression(tokens, instructions, schema);
+                instructions.add(Instruction.or());
+                break;
+            case Keywords.AND:
+                tokens.nextToken(); // skip "and"
+                parseExpression(tokens, instructions, schema);
+                parseExpression(tokens, instructions, schema);
+                instructions.add(Instruction.and());
+                break;
+            default:
+                parseBinaryOperator(tokens, instructions, schema);
+                break;
+        }
+        tokens.nextToken(); // skip )
+    }
 
-                        if (dataType.equals(DataTypes.LongType)) {
-                            instructions.add(Instruction.longEqual());
-                        } else if (dataType.equals(DataTypes.DoubleType)) {
-                            instructions.add(Instruction.doubleEqual());
-                        } else if (dataType.equals(DataTypes.BooleanType)) {
-                            instructions.add(Instruction.booleanEqual());
-                        } else {
-                            instructions.add(Instruction.stringEqual());
-                        }
-                        break;
-                    case "not":
-                        tokens.nextToken(); // skip "not"
-                        parseExpression(tokens, instructions, schema);
-                        instructions.add(Instruction.not());
-                        break;
+    private static void parseBinaryOperator(final StreamTokenizer tokens, final List<Instruction> instructions, final StructType schema) throws IOException {
+        var operator = tokens.sval;
+
+        tokens.nextToken(); // consume operator
+        var dataType = parseGetField(tokens, instructions, schema); // parse the get field operation
+        parseArgument(tokens, instructions, dataType); // parse the constant value to check against
+
+        switch (operator) {
+            case Keywords.TRAIT_EQ:
+                if (dataType.equals(DataTypes.LongType)) {
+                    instructions.add(Instruction.longEqual());
+                } else if (dataType.equals(DataTypes.DoubleType)) {
+                    instructions.add(Instruction.doubleEqual());
+                } else if (dataType.equals(DataTypes.BooleanType)) {
+                    instructions.add(Instruction.booleanEqual());
+                } else {
+                    instructions.add(Instruction.stringEqual());
+                }
+                break;
+            case Keywords.TRAIT_NE:
+                if (dataType.equals(DataTypes.LongType)) {
+                    instructions.add(Instruction.longNotEqual());
+                } else if (dataType.equals(DataTypes.DoubleType)) {
+                    instructions.add(Instruction.doubleNotEqual());
+                } else if (dataType.equals(DataTypes.BooleanType)) {
+                    instructions.add(Instruction.booleanNotEqual());
+                } else {
+                    instructions.add(Instruction.stringNotEqual());
+                }
+                break;
+            case Keywords.TRAIT_LT:
+                if (dataType.equals(DataTypes.LongType)) {
+                    instructions.add(Instruction.longLesserThan());
+                } else if (dataType.equals(DataTypes.DoubleType)) {
+                    instructions.add(Instruction.doubleLesserThan());
+                } else {
+                    instructions.add(Instruction.stringLesserThan());
+                }
+                break;
+            case Keywords.TRAIT_LE:
+                if (dataType.equals(DataTypes.LongType)) {
+                    instructions.add(Instruction.longLesserThanOrEqual());
+                } else if (dataType.equals(DataTypes.DoubleType)) {
+                    instructions.add(Instruction.doubleLesserThanOrEqual());
+                } else {
+                    instructions.add(Instruction.stringLesserThanOrEqual());
+                }
+                break;
+            case Keywords.TRAIT_GT:
+                if (dataType.equals(DataTypes.LongType)) {
+                    instructions.add(Instruction.longGreaterThan());
+                } else if (dataType.equals(DataTypes.DoubleType)) {
+                    instructions.add(Instruction.doubleGreaterThan());
+                } else {
+                    instructions.add(Instruction.stringGreaterThan());
+                }
+                break;
+            case Keywords.TRAIT_GE:
+                if (dataType.equals(DataTypes.LongType)) {
+                    instructions.add(Instruction.longGreaterThanOrEqual());
+                } else if (dataType.equals(DataTypes.DoubleType)) {
+                    instructions.add(Instruction.doubleGreaterThanOrEqual());
+                } else {
+                    instructions.add(Instruction.stringGreaterThanOrEqual());
                 }
                 break;
         }
     }
 
     private static DataType parseGetField(final StreamTokenizer tokens, final List<Instruction> instructions, final StructType schema) throws IOException {
-        tokens.nextToken();
-
         DataType dataType;
         try {
             var index = schema.fieldIndex(tokens.sval);
@@ -90,29 +148,22 @@ public final class Compiler {
         instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
         instructions.add(Instruction.getField());
 
+        tokens.nextToken(); // consume get field operation
+
         return dataType;
     }
 
     private static void parseArgument(final StreamTokenizer tokens, final List<Instruction> instructions, final DataType dataType) throws IOException {
-        tokens.nextToken();
         if (dataType != null) {
-            if (dataType.equals(DataTypes.LongType)) {
-                instructions.add(Instruction.load(Value.longValue(tokens.sval)));
-                return;
-            }
-
-            if (dataType.equals(DataTypes.DoubleType)) {
-                instructions.add(Instruction.load(Value.doubleValue(tokens.sval)));
-                return;
-            }
-
-            if (dataType.equals(DataTypes.BooleanType)) {
-                instructions.add(Instruction.load(Value.booleanValue(tokens.sval)));
-                return;
-            }
+            if (dataType.equals(DataTypes.LongType)) instructions.add(Instruction.load(Value.longValue(tokens.sval)));
+            if (dataType.equals(DataTypes.DoubleType)) instructions.add(Instruction.load(Value.doubleValue(tokens.sval)));
+            if (dataType.equals(DataTypes.BooleanType)) instructions.add(Instruction.load(Value.booleanValue(tokens.sval)));
+            if (dataType.equals(DataTypes.StringType)) instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
+        } else {
+            instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
         }
 
-        instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
+        tokens.nextToken(); // consume argument
     }
 
 }
