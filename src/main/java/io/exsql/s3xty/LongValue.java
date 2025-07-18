@@ -1,5 +1,7 @@
 package io.exsql.s3xty;
 
+import org.jetbrains.annotations.NotNull;
+
 public record LongValue(long wrapped) implements Value {
     @Override
     public long toLong() {
@@ -17,7 +19,7 @@ public record LongValue(long wrapped) implements Value {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return String.format("long(%d)", this.wrapped);
     }
 }

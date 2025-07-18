@@ -1,112 +1,169 @@
 package io.exsql.s3xty;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public record Instruction(OperationCode operation, Value[] operands) {
+/**
+ * Represents an instruction in the VM.
+ * An instruction consists of an operation code and optional operands.
+ */
+public record Instruction(OperationCode operation, @Nullable Value[] operands) {
+
+    /**
+     * Creates a new instruction with the given operation code and no operands.
+     *
+     * @param operation the operation code
+     * @return a new instruction
+     */
+    public static Instruction create(final OperationCode operation) {
+        return new Instruction(operation, null);
+    }
+
+    /**
+     * Creates a new instruction with the given operation code and operands.
+     *
+     * @param operation the operation code
+     * @param operands the operands
+     * @return a new instruction
+     */
+    public static Instruction create(final OperationCode operation, Value... operands) {
+        return new Instruction(operation, operands);
+    }
+
+
+    /**
+     * Returns the operand at the given index.
+     *
+     * @param index the index of the operand
+     * @return the operand at the given index
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
+    public Value operand(int index) {
+        if (operands == null || index < 0 || index >= operands.length) {
+            throw new IndexOutOfBoundsException("Invalid operand index: " + index);
+        }
+        return operands[index];
+    }
+
+    // Factory methods for common instructions
 
     public static Instruction halt() {
-        return new Instruction(OperationCode.HALT, null);
+        return create(OperationCode.HALT);
     }
 
     public static Instruction load(final Value value) {
-        return new Instruction(OperationCode.LOAD, new Value[]{value});
+        return create(OperationCode.LOAD, value);
     }
 
     public static Instruction getField() {
-        return new Instruction(OperationCode.GET_FIELD, null);
+        return create(OperationCode.GET_FIELD);
     }
 
     public static Instruction longEqual() {
-        return new Instruction(OperationCode.LONG_EQ, null);
+        return create(OperationCode.LONG_EQ);
     }
 
     public static Instruction stringEqual() {
-        return new Instruction(OperationCode.STRING_EQ, null);
+        return create(OperationCode.STRING_EQ);
     }
 
     public static Instruction doubleEqual() {
-        return new Instruction(OperationCode.DOUBLE_EQ, null);
+        return create(OperationCode.DOUBLE_EQ);
     }
 
     public static Instruction booleanEqual() {
-        return new Instruction(OperationCode.BOOLEAN_EQ, null);
+        return create(OperationCode.BOOLEAN_EQ);
     }
 
     public static Instruction longNotEqual() {
-        return new Instruction(OperationCode.LONG_NE, null);
+        return create(OperationCode.LONG_NE);
     }
 
     public static Instruction stringNotEqual() {
-        return new Instruction(OperationCode.STRING_NE, null);
+        return create(OperationCode.STRING_NE);
     }
 
     public static Instruction doubleNotEqual() {
-        return new Instruction(OperationCode.DOUBLE_NE, null);
+        return create(OperationCode.DOUBLE_NE);
     }
 
     public static Instruction booleanNotEqual() {
-        return new Instruction(OperationCode.BOOLEAN_NE, null);
+        return create(OperationCode.BOOLEAN_NE);
     }
 
     public static Instruction longLesserThan() {
-        return new Instruction(OperationCode.LONG_LT, null);
+        return create(OperationCode.LONG_LT);
     }
 
     public static Instruction stringLesserThan() {
-        return new Instruction(OperationCode.STRING_LT, null);
+        return create(OperationCode.STRING_LT);
     }
 
     public static Instruction doubleLesserThan() {
-        return new Instruction(OperationCode.DOUBLE_LT, null);
+        return create(OperationCode.DOUBLE_LT);
     }
 
     public static Instruction longLesserThanOrEqual() {
-        return new Instruction(OperationCode.LONG_LE, null);
+        return create(OperationCode.LONG_LE);
     }
 
     public static Instruction stringLesserThanOrEqual() {
-        return new Instruction(OperationCode.STRING_LE, null);
+        return create(OperationCode.STRING_LE);
     }
 
     public static Instruction doubleLesserThanOrEqual() {
-        return new Instruction(OperationCode.DOUBLE_LE, null);
+        return create(OperationCode.DOUBLE_LE);
     }
 
     public static Instruction longGreaterThan() {
-        return new Instruction(OperationCode.LONG_GT, null);
+        return create(OperationCode.LONG_GT);
     }
 
     public static Instruction stringGreaterThan() {
-        return new Instruction(OperationCode.STRING_GT, null);
+        return create(OperationCode.STRING_GT);
     }
 
     public static Instruction doubleGreaterThan() {
-        return new Instruction(OperationCode.DOUBLE_GT, null);
+        return create(OperationCode.DOUBLE_GT);
     }
 
     public static Instruction longGreaterThanOrEqual() {
-        return new Instruction(OperationCode.LONG_GE, null);
+        return create(OperationCode.LONG_GE);
     }
 
     public static Instruction stringGreaterThanOrEqual() {
-        return new Instruction(OperationCode.STRING_GE, null);
+        return create(OperationCode.STRING_GE);
     }
 
     public static Instruction doubleGreaterThanOrEqual() {
-        return new Instruction(OperationCode.DOUBLE_GE, null);
+        return create(OperationCode.DOUBLE_GE);
     }
 
     public static Instruction not() {
-        return new Instruction(OperationCode.NOT, null);
+        return create(OperationCode.NOT);
     }
-
-    public static Instruction or() {
-        return new Instruction(OperationCode.OR, null);
+    
+    // Control flow instructions
+    
+    
+    public static Instruction jumpIfTrue(final int targetIndex) {
+        return create(OperationCode.JUMP_IF_TRUE, Value.longValue(targetIndex));
     }
-
-    public static Instruction and() {
-        return new Instruction(OperationCode.AND, null);
+    
+    public static Instruction jumpIfFalse(final int targetIndex) {
+        return create(OperationCode.JUMP_IF_FALSE, Value.longValue(targetIndex));
     }
+    
+    // Stack manipulation instructions
+    
+    public static Instruction dup() {
+        return create(OperationCode.DUP);
+    }
+    
+    public static Instruction pop() {
+        return create(OperationCode.POP);
+    }
+    
 
     @Override
     public @NotNull String toString() {

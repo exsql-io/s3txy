@@ -31,6 +31,10 @@ public enum OperationCode {
     STRING_GE,
     // Combining Operations
     NOT,
-    OR,
-    AND
+    // Control Flow Operations
+    JUMP_IF_TRUE,   // Jump if top of stack is true
+    JUMP_IF_FALSE,  // Jump if top of stack is false
+    // Stack Operations
+    DUP,            // Duplicate the top value on the stack
+    POP             // Remove the top value from the stack
 }

@@ -25,7 +25,7 @@ public class S3Xty {
             }));
 
             var stopWatch = Stopwatch.createStarted();
-            for (int i = 0; i < 100_000_000; i++) {
+            for (int i = 0; i < 1_000_000_000; i++) {
                 vm.reset();
                 vm.evaluate(program, bag);
             }
