@@ -7,11 +7,13 @@ import org.apache.spark.unsafe.types.UTF8String;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SExpressionVMTest {
 
-    private final SExpressionVM vm = new SExpressionVM();
+    private final SExpressionVM vm = new SExpressionVM(Map.of());
 
     private final StructType schema = StructType.fromDDL("long LONG, double DOUBLE, boolean BOOLEAN");
 

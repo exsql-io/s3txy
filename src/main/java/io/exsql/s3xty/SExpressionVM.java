@@ -29,10 +29,13 @@ public final class SExpressionVM {
     // Instruction handlers
     private final Map<OperationCode, InstructionHandler> instructionHandlers = new HashMap<>();
 
+    private final boolean useVectorAPI;
+
     /**
      * Creates a new SExpressionVM with the default instruction handlers.
      */
-    public SExpressionVM() {
+    public SExpressionVM(final Map<String, String> environment) {
+        this.useVectorAPI = Boolean.parseBoolean(environment.getOrDefault("S3XTY_VM_USE_VECTOR_API", "false"));
         registerDefaultInstructionHandlers();
     }
 
@@ -194,11 +197,11 @@ public final class SExpressionVM {
         registerBinaryOperation(OperationCode.LONG_EQ, Operation::nullSafeLongEq);
         registerBinaryOperation(OperationCode.DOUBLE_EQ, Operation::nullSafeDoubleEq);
         registerBinaryOperation(OperationCode.BOOLEAN_EQ, Operation::nullSafeBooleanEq);
-        registerBinaryOperation(OperationCode.STRING_EQ, Operation::nullSafeStringEq);
+        registerBinaryOperation(OperationCode.STRING_EQ, (v1, v2) -> Operation.nullSafeStringEq(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.LONG_NE, (v1, v2) -> !Operation.nullSafeLongEq(v1, v2));
         registerBinaryOperation(OperationCode.DOUBLE_NE, (v1, v2) -> !Operation.nullSafeDoubleEq(v1, v2));
         registerBinaryOperation(OperationCode.BOOLEAN_NE, (v1, v2) -> !Operation.nullSafeBooleanEq(v1, v2));
-        registerBinaryOperation(OperationCode.STRING_NE, (v1, v2) -> !Operation.nullSafeStringEq(v1, v2));
+        registerBinaryOperation(OperationCode.STRING_NE, (v1, v2) -> !Operation.nullSafeStringEq(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.LONG_LT, Operation::nullSafeLongLt);
         registerBinaryOperation(OperationCode.DOUBLE_LT, Operation::nullSafeDoubleLt);
         registerBinaryOperation(OperationCode.STRING_LT, Operation::nullSaveStringLt);

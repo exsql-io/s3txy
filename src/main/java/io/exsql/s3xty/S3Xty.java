@@ -32,7 +32,7 @@ public class S3Xty {
             for (var i = 3; i < args.length; i++) {
                 final int index = i;
                 final Runnable task = () -> {
-                    var vm = new SExpressionVM();
+                    var vm = new SExpressionVM(System.getenv());
                     var program = Compiler.compile(schema, args[index]);
                     LOGGER.debug("\n{}", program);
 

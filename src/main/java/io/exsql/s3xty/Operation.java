@@ -23,10 +23,12 @@ public final class Operation {
                ((BooleanValue) left).wrapped() == ((BooleanValue) right).wrapped();
     }
 
-    public static boolean nullSafeStringEq(final Value right, final Value left) {
-        return (left instanceof StringValue) &&
-               (right instanceof StringValue) &&
-               nullSafeUTF8StringEq(((StringValue) right).wrapped(), ((StringValue) left).wrapped());
+    public static boolean nullSafeStringEq(final Value right, final Value left, final boolean useVectorAPI) {
+        if (!(left instanceof StringValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+        return useVectorAPI ?
+                VectorOperation.nullSafeUTF8StringEq(((StringValue) right).wrapped(), ((StringValue) left).wrapped()):
+                nullSafeUTF8StringEq(((StringValue) right).wrapped(), ((StringValue) left).wrapped());
     }
 
     private static boolean nullSafeUTF8StringEq(final UTF8String right, final UTF8String left) {

@@ -28,6 +28,10 @@ public class S3XtyBuild extends Project {
         scope(test)
             .include(dependency("org.junit.jupiter", "junit-jupiter", version(5,11,4)))
             .include(dependency("org.junit.platform", "junit-platform-console-standalone", version(1,11,4)));
+
+        compileOperation()
+                .compileOptions()
+                .addModules("jdk.incubator.vector");
     }
 
     public static void main(final String[] args) {
