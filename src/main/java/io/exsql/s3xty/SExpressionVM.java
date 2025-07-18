@@ -57,7 +57,7 @@ public final class SExpressionVM {
                 LOGGER.debug("Executing instruction: {} at index {}", instruction, program.getCurrentIndex() - 1);
             }
             
-            InstructionHandler handler = instructionHandlers.get(operation);
+            var handler = instructionHandlers.get(operation);
             if (handler != null) {
                 handler.execute(this, program, instruction);
             } else {
@@ -126,8 +126,8 @@ public final class SExpressionVM {
         if (sp <= 0) {
             throw new IllegalStateException("Cannot duplicate: stack is empty");
         }
-        Value topValue = this.stack[this.sp - 1];
-        push(topValue);
+
+        push(this.stack[this.sp - 1]);
     }
     
     /**
@@ -141,12 +141,11 @@ public final class SExpressionVM {
         
         // Memory Operations
         instructionHandlers.put(OperationCode.LOAD, (vm, _, instruction) -> vm.push(instruction.operand(0)));
-        
         instructionHandlers.put(OperationCode.GET_FIELD, (vm, _, _) -> {
-            Value fieldPosition = vm.pop();
-            Value fieldType = vm.pop();
-            
+            var fieldPosition = vm.pop();
+            var fieldType = vm.pop();
             var dataType = ((FieldTypeValue) fieldType).dataType();
+
             if (dataType.equals(DataTypes.LongType)) {
                 var optional = vm.getValueBag().getLong(((StringValue) fieldPosition).wrapped());
                 if (optional.isPresent()) {
@@ -170,90 +169,48 @@ public final class SExpressionVM {
         });
         
         // Combining Operations
-        instructionHandlers.put(OperationCode.NOT, (vm, _, _) -> {
-            Value value = vm.pop();
-            vm.push(Value.booleanValue(!((BooleanValue) value).wrapped()));
-        });
+        instructionHandlers.put(OperationCode.NOT, (vm, _, _) -> vm.push(Value.booleanValue(!((BooleanValue) vm.pop()).wrapped())));
         
         // Control Flow Operations
-        
         instructionHandlers.put(OperationCode.JUMP_IF_TRUE, (vm, program, instruction) -> {
-            Value condition = vm.pop();
-            if (((BooleanValue) condition).wrapped()) {
+            if (((BooleanValue) vm.pop()).wrapped()) {
                 int jumpTarget = (int) ((LongValue) instruction.operand(0)).wrapped();
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Condition is true, jumping to instruction index: {}", jumpTarget);
-                }
                 program.setCurrentIndex(jumpTarget);
-            } else if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Condition is false, not jumping");
             }
         });
         
         instructionHandlers.put(OperationCode.JUMP_IF_FALSE, (vm, program, instruction) -> {
-            Value condition = vm.pop();
-            if (!((BooleanValue) condition).wrapped()) {
+            if (!((BooleanValue) vm.pop()).wrapped()) {
                 int jumpTarget = (int) ((LongValue) instruction.operand(0)).wrapped();
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Condition is false, jumping to instruction index: {}", jumpTarget);
-                }
                 program.setCurrentIndex(jumpTarget);
-            } else if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Condition is true, not jumping");
             }
         });
-        
-        
+
         // Stack Operations
         instructionHandlers.put(OperationCode.DUP, (vm, _, _) -> vm.dup());
         instructionHandlers.put(OperationCode.POP, (vm, _, _) -> vm.pop());
         
         // Register binary operations
-        registerBinaryOperation(OperationCode.LONG_EQ, 
-            (v1, v2) -> ((LongValue)v1).wrapped() == ((LongValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.DOUBLE_EQ, 
-            (v1, v2) -> ((DoubleValue)v1).wrapped() == ((DoubleValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.BOOLEAN_EQ, 
-            (v1, v2) -> ((BooleanValue)v1).wrapped() == ((BooleanValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.STRING_EQ, 
-            (v1, v2) -> ((StringValue)v1).wrapped().equals(((StringValue)v2).wrapped()));
-            
-        registerBinaryOperation(OperationCode.LONG_NE, 
-            (v1, v2) -> ((LongValue)v1).wrapped() != ((LongValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.DOUBLE_NE, 
-            (v1, v2) -> ((DoubleValue)v1).wrapped() != ((DoubleValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.BOOLEAN_NE, 
-            (v1, v2) -> ((BooleanValue)v1).wrapped() != ((BooleanValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.STRING_NE, 
-            (v1, v2) -> !((StringValue)v1).wrapped().equals(((StringValue)v2).wrapped()));
-            
-        registerBinaryOperation(OperationCode.LONG_LT, 
-            (v1, v2) -> ((LongValue)v1).wrapped() < ((LongValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.DOUBLE_LT, 
-            (v1, v2) -> ((DoubleValue)v1).wrapped() < ((DoubleValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.STRING_LT, 
-            (v1, v2) -> ((StringValue)v1).wrapped().compareTo(((StringValue)v2).wrapped()) < 0);
-            
-        registerBinaryOperation(OperationCode.LONG_LE, 
-            (v1, v2) -> ((LongValue)v1).wrapped() <= ((LongValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.DOUBLE_LE, 
-            (v1, v2) -> ((DoubleValue)v1).wrapped() <= ((DoubleValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.STRING_LE, 
-            (v1, v2) -> ((StringValue)v1).wrapped().compareTo(((StringValue)v2).wrapped()) <= 0);
-            
-        registerBinaryOperation(OperationCode.LONG_GT, 
-            (v1, v2) -> ((LongValue)v1).wrapped() > ((LongValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.DOUBLE_GT, 
-            (v1, v2) -> ((DoubleValue)v1).wrapped() > ((DoubleValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.STRING_GT, 
-            (v1, v2) -> ((StringValue)v1).wrapped().compareTo(((StringValue)v2).wrapped()) > 0);
-            
-        registerBinaryOperation(OperationCode.LONG_GE, 
-            (v1, v2) -> ((LongValue)v1).wrapped() >= ((LongValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.DOUBLE_GE, 
-            (v1, v2) -> ((DoubleValue)v1).wrapped() >= ((DoubleValue)v2).wrapped());
-        registerBinaryOperation(OperationCode.STRING_GE, 
-            (v1, v2) -> ((StringValue)v1).wrapped().compareTo(((StringValue)v2).wrapped()) >= 0);
+        registerBinaryOperation(OperationCode.LONG_EQ, Operation::nullSafeLongEq);
+        registerBinaryOperation(OperationCode.DOUBLE_EQ, Operation::nullSafeDoubleEq);
+        registerBinaryOperation(OperationCode.BOOLEAN_EQ, Operation::nullSafeBooleanEq);
+        registerBinaryOperation(OperationCode.STRING_EQ, Operation::nullSafeStringEq);
+        registerBinaryOperation(OperationCode.LONG_NE, (v1, v2) -> !Operation.nullSafeLongEq(v1, v2));
+        registerBinaryOperation(OperationCode.DOUBLE_NE, (v1, v2) -> !Operation.nullSafeDoubleEq(v1, v2));
+        registerBinaryOperation(OperationCode.BOOLEAN_NE, (v1, v2) -> !Operation.nullSafeBooleanEq(v1, v2));
+        registerBinaryOperation(OperationCode.STRING_NE, (v1, v2) -> !Operation.nullSafeStringEq(v1, v2));
+        registerBinaryOperation(OperationCode.LONG_LT, Operation::nullSafeLongLt);
+        registerBinaryOperation(OperationCode.DOUBLE_LT, Operation::nullSafeDoubleLt);
+        registerBinaryOperation(OperationCode.STRING_LT, Operation::nullSaveStringLt);
+        registerBinaryOperation(OperationCode.LONG_LE, Operation::nullSafeLongLe);
+        registerBinaryOperation(OperationCode.DOUBLE_LE, Operation::nullSafeDoubleLe);
+        registerBinaryOperation(OperationCode.STRING_LE, Operation::nullSafeStringLe);
+        registerBinaryOperation(OperationCode.LONG_GT, Operation::nullSafeLongGt);
+        registerBinaryOperation(OperationCode.DOUBLE_GT, Operation::nullSafeDoubleGt);
+        registerBinaryOperation(OperationCode.STRING_GT, Operation::nullSafeStringGt);
+        registerBinaryOperation(OperationCode.LONG_GE, Operation::nullSafeLongGe);
+        registerBinaryOperation(OperationCode.DOUBLE_GE, Operation::nullSafeDoubleGe);
+        registerBinaryOperation(OperationCode.STRING_GE, Operation::nullSafeStringGe);
     }
     
     /**
@@ -263,11 +220,7 @@ public final class SExpressionVM {
      * @param operation the operation function that takes two values and returns a boolean result
      */
     private void registerBinaryOperation(OperationCode opCode, BiFunction<Value, Value, Boolean> operation) {
-        instructionHandlers.put(opCode, (vm, _, _) -> {
-            Value v1 = vm.pop();
-            Value v2 = vm.pop();
-            vm.push(Value.booleanValue(operation.apply(v1, v2)));
-        });
+        instructionHandlers.put(opCode, (vm, _, _) -> vm.push(Value.booleanValue(operation.apply(vm.pop(), vm.pop()))));
     }
     
     /**
