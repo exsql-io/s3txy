@@ -608,4 +608,5 @@ public class SExpressionVMTest {
         vm.evaluate(Compiler.compile(schema, "(trait-eq \"long\" \"2\")"), bag);
         assertFalse(vm.result());
     }
+
 }

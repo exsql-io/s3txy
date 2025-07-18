@@ -53,7 +53,7 @@ public final class Compiler {
             instructions.add(Instruction.halt());
 
             var elapsed = stopWatch.elapsed(TimeUnit.MILLISECONDS);
-            LOGGER.info("compile phase took: {}ms", elapsed);
+            LOGGER.debug("compile phase took: {}ms", elapsed);
 
             return new Program(expression, instructions);
         } catch (final Exception exception) {
