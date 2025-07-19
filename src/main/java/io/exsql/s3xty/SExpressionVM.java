@@ -204,16 +204,16 @@ public final class SExpressionVM {
         registerBinaryOperation(OperationCode.STRING_NE, (v1, v2) -> !Operation.nullSafeStringEq(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.LONG_LT, Operation::nullSafeLongLt);
         registerBinaryOperation(OperationCode.DOUBLE_LT, Operation::nullSafeDoubleLt);
-        registerBinaryOperation(OperationCode.STRING_LT, Operation::nullSaveStringLt);
+        registerBinaryOperation(OperationCode.STRING_LT, (v1, v2) -> Operation.nullSafeStringLt(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.LONG_LE, Operation::nullSafeLongLe);
         registerBinaryOperation(OperationCode.DOUBLE_LE, Operation::nullSafeDoubleLe);
-        registerBinaryOperation(OperationCode.STRING_LE, Operation::nullSafeStringLe);
+        registerBinaryOperation(OperationCode.STRING_LE, (v1, v2) -> Operation.nullSafeStringLe(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.LONG_GT, Operation::nullSafeLongGt);
         registerBinaryOperation(OperationCode.DOUBLE_GT, Operation::nullSafeDoubleGt);
-        registerBinaryOperation(OperationCode.STRING_GT, Operation::nullSafeStringGt);
+        registerBinaryOperation(OperationCode.STRING_GT, (v1, v2) -> Operation.nullSafeStringGt(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.LONG_GE, Operation::nullSafeLongGe);
         registerBinaryOperation(OperationCode.DOUBLE_GE, Operation::nullSafeDoubleGe);
-        registerBinaryOperation(OperationCode.STRING_GE, Operation::nullSafeStringGe);
+        registerBinaryOperation(OperationCode.STRING_GE, (v1, v2) -> Operation.nullSafeStringGe(v1, v2, useVectorAPI));
     }
     
     /**

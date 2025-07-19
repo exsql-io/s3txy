@@ -164,4 +164,323 @@ public class SExpressionVMVectorTest {
         assertTrue(vm.result());
     }
 
+    @Test
+    void verifyTraitLtString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-lt \"string\" \"string\")"), bag);
+        assertFalse(vm.result());
+    }
+
+    @Test
+    void verifyTraitLtStringWithDifferentValues() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-lt \"string\" \"banana\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitEqWithNullString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), null})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-eq \"string\" \"test\")"), bag);
+        assertFalse(vm.result());
+    }
+
+    @Test
+    void verifyTraitEqWithEmptyString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-eq \"string\" \"\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLtWithEmptyString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-lt \"string\" \"a\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGtString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("zebra")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string\" \"apple\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGtStringWithSameValue() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string\" \"apple\")"), bag);
+        assertFalse(vm.result());
+    }
+
+    @Test
+    void verifyTraitLeString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-le \"string\" \"apple\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLeStringWithDifferentValues() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-le \"string\" \"banana\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGeString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("banana")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string\" \"banana\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGeStringWithDifferentValues() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("banana")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string\" \"apple\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitEqWithDifferentLengthStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string1"), UTF8String.fromString("short")}),
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string2"), UTF8String.fromString("longer_string")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-eq \"string1\" \"short\")"), bag);
+        assertTrue(vm.result());
+        
+        vm.reset();
+        vm.evaluate(Compiler.compile(schema, "(trait-eq \"string2\" \"longer_string\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLtWithCommonPrefixStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("prefix_a")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-lt \"string\" \"prefix_b\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitEqWithVeryLongStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("i am a really long string and I know you know it")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-eq \"string\" \"i am a really long string and I know you know it\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLtWithVeryLongStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("i am a really long string and I know you know it")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-lt \"string\" \"i am too small\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLeWithNullString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), null})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-le \"string\" \"apple\")"), bag);
+        assertFalse(vm.result());
+    }
+
+    @Test
+    void verifyTraitGtWithNullString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), null})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string\" \"apple\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGeWithNullString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), null})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string\" \"apple\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLeWithEmptyString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-le \"string\" \"apple\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGtWithEmptyString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string\" \"\")"), bag);
+        assertFalse(vm.result());
+    }
+
+    @Test
+    void verifyTraitGeWithEmptyString() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string\" \"\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLeWithDifferentLengthStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string1"), UTF8String.fromString("short")}),
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string2"), UTF8String.fromString("longer_string")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-le \"string1\" \"short\")"), bag);
+        assertTrue(vm.result());
+        
+        vm.reset();
+        vm.evaluate(Compiler.compile(schema, "(trait-le \"string2\" \"z\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGtWithDifferentLengthStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string1"), UTF8String.fromString("short")}),
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string2"), UTF8String.fromString("longer_string")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string1\" \"a\")"), bag);
+        assertTrue(vm.result());
+        
+        vm.reset();
+        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string2\" \"a\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGeWithDifferentLengthStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string1"), UTF8String.fromString("short")}),
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string2"), UTF8String.fromString("longer_string")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string1\" \"short\")"), bag);
+        assertTrue(vm.result());
+        
+        vm.reset();
+        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string2\" \"longer\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLeWithCommonPrefixStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("prefix_a")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-le \"string\" \"prefix_a\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGtWithCommonPrefixStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("prefix_b")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string\" \"prefix_a\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGeWithCommonPrefixStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("prefix_a")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string\" \"prefix_a\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitLeWithVeryLongStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("i am a really long string and I know you know it")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-le \"string\" \"i am a really long string and I know you know it\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGtWithVeryLongStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("z am a really long string and I know you know it")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string\" \"a am a really long string and I know you know it\")"), bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitGeWithVeryLongStrings() {
+        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("i am a really long string and I know you know it")})
+        }));
+
+        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string\" \"i am a really long string and I know you know it\")"), bag);
+        assertTrue(vm.result());
+    }
 }

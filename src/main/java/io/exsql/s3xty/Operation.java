@@ -47,10 +47,12 @@ public final class Operation {
                ((DoubleValue) left).wrapped() < ((DoubleValue) right).wrapped();
     }
 
-    public static boolean nullSaveStringLt(final Value right, final Value left) {
-        return (left instanceof StringValue) &&
-               (right instanceof StringValue) &&
-               nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) < 0;
+    public static boolean nullSafeStringLt(final Value right, final Value left, final boolean useVectorAPI) {
+        if (!(left instanceof StringValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+        return useVectorAPI ?
+                VectorOperation.nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) < 0 :
+                nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) < 0;
     }
 
     public static boolean nullSafeLongLe(final Value right, final Value left) {
@@ -65,10 +67,12 @@ public final class Operation {
                 ((DoubleValue) left).wrapped() <= ((DoubleValue) right).wrapped();
     }
 
-    public static boolean nullSafeStringLe(final Value right, final Value left) {
-        return (left instanceof StringValue) &&
-               (right instanceof StringValue) &&
-               nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) <= 0;
+    public static boolean nullSafeStringLe(final Value right, final Value left, final boolean useVectorAPI) {
+        if (!(left instanceof StringValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+        return useVectorAPI ?
+                VectorOperation.nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) <= 0 :
+                nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) <= 0;
     }
 
     public static boolean nullSafeLongGt(final Value right, final Value left) {
@@ -83,10 +87,12 @@ public final class Operation {
                ((DoubleValue) left).wrapped() > ((DoubleValue) right).wrapped();
     }
 
-    public static boolean nullSafeStringGt(final Value right, final Value left) {
-        return (left instanceof StringValue) &&
-               (right instanceof StringValue) &&
-               nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) > 0;
+    public static boolean nullSafeStringGt(final Value right, final Value left, final boolean useVectorAPI) {
+        if (!(left instanceof StringValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+        return useVectorAPI ?
+                VectorOperation.nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) > 0 :
+                nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) > 0;
     }
 
     public static boolean nullSafeLongGe(final Value right, final Value left) {
@@ -101,10 +107,12 @@ public final class Operation {
                ((DoubleValue) left).wrapped() >= ((DoubleValue) right).wrapped();
     }
 
-    public static boolean nullSafeStringGe(final Value right, final Value left) {
-        return (left instanceof StringValue) &&
-               (right instanceof StringValue) &&
-               nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) >= 0;
+    public static boolean nullSafeStringGe(final Value right, final Value left, final boolean useVectorAPI) {
+        if (!(left instanceof StringValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+        return useVectorAPI ?
+                VectorOperation.nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) >= 0 :
+                nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) >= 0;
     }
 
     private static int nullSafeUTF8StringCompare(final UTF8String right, final UTF8String left) {
