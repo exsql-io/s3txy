@@ -23,8 +23,8 @@ public final class RecordGenerator {
             "devil", "e", "exact", "circle", "moderate", "month", "accepted"
     };
 
-    public static CachedValueBag[] generate(final int count) {
-        var bags = new CachedValueBag[count];
+    public static ArrayData[] generate(final int count) {
+        var data = new ArrayData[count];
         for (var i = 0; i < count; i++) {
             // Decide how many fields to include (1-4)
             int fieldCount = 1 + RANDOM.nextInt(4);
@@ -116,10 +116,10 @@ public final class RecordGenerator {
                 }
             }
 
-            bags[i] = new CachedValueBag(ArrayData.toArrayData(entries));
+            data[i] = ArrayData.toArrayData(entries);
         }
 
-        return bags;
+        return data;
     }
 
 }

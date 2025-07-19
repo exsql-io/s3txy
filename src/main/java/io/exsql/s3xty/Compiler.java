@@ -33,32 +33,55 @@ public final class Compiler {
      * @return the compiled program
      */
     public static Program compile(final StructType schema, final String expression) {
+        return compile(schema, new String[] { expression });
+    }
+    
+    /**
+     * Compiles an array of S-expressions into a single program.
+     * Each expression is compiled and its result is stored in the results array at the corresponding index.
+     *
+     * @param schema the schema of the data
+     * @param expressions the array of S-expressions to compile
+     * @return the compiled program with all expressions inlined
+     */
+    public static Program compile(final StructType schema, final String[] expressions) {
         if (schema == null) {
             throw new IllegalArgumentException("Schema cannot be null");
         }
 
-        if (expression == null || expression.isEmpty()) {
-            throw new IllegalArgumentException("Expression cannot be null or empty");
+        if (expressions == null || expressions.length == 0) {
+            throw new IllegalArgumentException("Expressions array cannot be null or empty");
         }
         
         var stopWatch = Stopwatch.createStarted();
-        var tokens = new StreamTokenizer(new StringReader(expression));
-
         var instructions = new ArrayList<Instruction>();
         try {
-            while (tokens.nextToken() != StreamTokenizer.TT_EOF) {
-                parseExpression(tokens, instructions, schema);
+            for (var i = 0; i < expressions.length; i++) {
+                String expression = expressions[i];
+                if (expression == null || expression.isEmpty()) {
+                    throw new IllegalArgumentException("Expression at index " + i + " cannot be null or empty");
+                }
+                
+                // Parse and compile the expression
+                var tokens = new StreamTokenizer(new StringReader(expression));
+                while (tokens.nextToken() != StreamTokenizer.TT_EOF) {
+                    parseExpression(tokens, instructions, schema);
+                }
+                
+                // Store the result at the corresponding index in the results array
+                instructions.add(Instruction.storeResult(i));
             }
 
+            // Add the final halt instruction
             instructions.add(Instruction.halt());
 
             var elapsed = stopWatch.elapsed(TimeUnit.MILLISECONDS);
             LOGGER.debug("compile phase took: {}ms", elapsed);
 
-            return new Program(expression, instructions);
+            return new Program(expressions, instructions);
         } catch (final Exception exception) {
-            LOGGER.error("Error compiling expression: {}", expression, exception);
-            throw new RuntimeException("Error compiling expression: " + exception, exception);
+            LOGGER.error("Error compiling expressions: {}", String.join("; ", expressions), exception);
+            throw new RuntimeException("Error compiling expressions: " + exception, exception);
         }
     }
 

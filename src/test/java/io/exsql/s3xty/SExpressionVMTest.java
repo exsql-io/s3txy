@@ -4,23 +4,19 @@ import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
 import org.apache.spark.sql.catalyst.util.ArrayData;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.unsafe.types.UTF8String;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SExpressionVMTest {
 
-    private final SExpressionVM vm = new SExpressionVM(Map.of());
+    private final static Map<String, String> environment = Map.of();
 
     private final StructType schema = StructType.fromDDL("long LONG, double DOUBLE, boolean BOOLEAN");
-
-    @BeforeEach
-    void reset() {
-        vm.reset();
-    }
 
     @Test
     void verifyTraitEqLong() {
@@ -28,7 +24,8 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"long\" \"1\")"), bag);
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-eq \"long\" \"1\")"));
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -38,7 +35,8 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"string\" \"string\")"), bag);
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-eq \"string\" \"string\")"));
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -48,7 +46,8 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"double\" \"1.5\")"), bag);
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-eq \"double\" \"1.5\")"));
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -58,7 +57,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"boolean\" \"true\")"), bag);
+        var program = Compiler.compile(schema, "(trait-eq \"boolean\" \"true\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -68,7 +69,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(not (trait-eq \"long\" \"1\"))"), bag);
+        var program = Compiler.compile(schema, "(not (trait-eq \"long\" \"1\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -78,7 +81,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(not (trait-eq \"string\" \"string\"))"), bag);
+        var program = Compiler.compile(schema, "(not (trait-eq \"string\" \"string\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -88,7 +93,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(not (trait-eq \"double\" \"1.5\"))"), bag);
+        var program = Compiler.compile(schema, "(not (trait-eq \"double\" \"1.5\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -98,7 +105,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(not (trait-eq \"boolean\" \"true\"))"), bag);
+        var program = Compiler.compile(schema, "(not (trait-eq \"boolean\" \"true\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -109,7 +118,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(or (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\"))"), bag);
+        var program = Compiler.compile(schema, "(or (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -121,7 +132,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(or (or (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\")) (trait-eq \"string\" \"string\"))"), bag);
+        var program = Compiler.compile(schema, "(or (or (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\")) (trait-eq \"string\" \"string\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -133,7 +146,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(or (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\") (trait-eq \"string\" \"string\"))"), bag);
+        var program = Compiler.compile(schema, "(or (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\") (trait-eq \"string\" \"string\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -144,7 +159,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(and (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\"))"), bag);
+        var program = Compiler.compile(schema, "(and (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -156,7 +173,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(and (and (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\")) (trait-eq \"string\" \"string\"))"), bag);
+        var program = Compiler.compile(schema, "(and (and (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\")) (trait-eq \"string\" \"string\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -168,7 +187,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(and (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\") (trait-eq \"string\" \"string\"))"), bag);
+        var program = Compiler.compile(schema, "(and (trait-eq \"boolean\" \"true\") (trait-eq \"long\" \"5\") (trait-eq \"string\" \"string\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -178,7 +199,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-ne \"long\" \"1\")"), bag);
+        var program = Compiler.compile(schema, "(trait-ne \"long\" \"1\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -188,7 +211,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-ne \"string\" \"string\")"), bag);
+        var program = Compiler.compile(schema, "(trait-ne \"string\" \"string\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -198,7 +223,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-ne \"double\" \"1.5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-ne \"double\" \"1.5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -208,7 +235,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-ne \"boolean\" \"true\")"), bag);
+        var program = Compiler.compile(schema, "(trait-ne \"boolean\" \"true\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -218,7 +247,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(not (trait-ne \"long\" \"1\"))"), bag);
+        var program = Compiler.compile(schema, "(not (trait-ne \"long\" \"1\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -228,7 +259,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(not (trait-ne \"string\" \"string\"))"), bag);
+        var program = Compiler.compile(schema, "(not (trait-ne \"string\" \"string\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -238,7 +271,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(not (trait-ne \"double\" \"1.5\"))"), bag);
+        var program = Compiler.compile(schema, "(not (trait-ne \"double\" \"1.5\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -248,7 +283,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(not (trait-ne \"boolean\" \"true\"))"), bag);
+        var program = Compiler.compile(schema, "(not (trait-ne \"boolean\" \"true\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -258,7 +295,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-lt \"long\" \"1\")"), bag);
+        var program = Compiler.compile(schema, "(trait-lt \"long\" \"1\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -268,7 +307,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-lt \"string\" \"string\")"), bag);
+        var program = Compiler.compile(schema, "(trait-lt \"string\" \"string\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -278,7 +319,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-lt \"double\" \"1.5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-lt \"double\" \"1.5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -288,7 +331,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-le \"long\" \"1\")"), bag);
+        var program = Compiler.compile(schema, "(trait-le \"long\" \"1\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -298,7 +343,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-le \"string\" \"string\")"), bag);
+        var program = Compiler.compile(schema, "(trait-le \"string\" \"string\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -308,7 +355,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-le \"double\" \"1.5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-le \"double\" \"1.5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -318,7 +367,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-gt \"long\" \"1\")"), bag);
+        var program = Compiler.compile(schema, "(trait-gt \"long\" \"1\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -328,7 +379,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string\" \"string\")"), bag);
+        var program = Compiler.compile(schema, "(trait-gt \"string\" \"string\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -338,7 +391,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-gt \"double\" \"1.5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-gt \"double\" \"1.5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -348,7 +403,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-ge \"long\" \"1\")"), bag);
+        var program = Compiler.compile(schema, "(trait-ge \"long\" \"1\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -358,7 +415,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-ge \"string\" \"string\")"), bag);
+        var program = Compiler.compile(schema, "(trait-ge \"string\" \"string\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -368,7 +427,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-ge \"double\" \"1.5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-ge \"double\" \"1.5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -380,7 +441,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-lt \"long\" \"5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-lt \"long\" \"5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -393,7 +456,9 @@ public class SExpressionVMTest {
         }));
 
         // Testing if long (10) > 5, which should be true
-        vm.evaluate(Compiler.compile(schema, "(trait-gt \"long\" \"5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-gt \"long\" \"5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -403,7 +468,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-lt \"double\" \"2.5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-lt \"double\" \"2.5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -415,7 +482,9 @@ public class SExpressionVMTest {
         }));
 
         // Testing if double (3.5) > 2.5, which should be true
-        vm.evaluate(Compiler.compile(schema, "(trait-gt \"double\" \"2.5\")"), bag);
+        var program = Compiler.compile(schema, "(trait-gt \"double\" \"2.5\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -425,7 +494,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-lt \"string\" \"banana\")"), bag);
+        var program = Compiler.compile(schema, "(trait-lt \"string\" \"banana\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -438,7 +509,9 @@ public class SExpressionVMTest {
         }));
 
         // Testing if "zebra" > "apple", which should be true
-        vm.evaluate(Compiler.compile(schema, "(trait-gt \"string\" \"apple\")"), bag);
+        var program = Compiler.compile(schema, "(trait-gt \"string\" \"apple\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -448,7 +521,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-ne \"long\" \"2\")"), bag);
+        var program = Compiler.compile(schema, "(trait-ne \"long\" \"2\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -459,13 +534,17 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("test")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-lt \"long\" \"5\")"), bag);
-        assertTrue(vm.result());
+        // First test a single condition
+        var program1 = Compiler.compile(schema, "(trait-lt \"long\" \"5\")");
+        var vm1 = new SExpressionVM(environment, program1);
+        vm1.evaluate(bag);
+        assertTrue(vm1.result());
         
         // Now test the AND operation with both conditions true
-        vm.reset();
-        vm.evaluate(Compiler.compile(schema, "(and (trait-lt \"long\" \"5\") (trait-eq \"string\" \"test\"))"), bag);
-        assertTrue(vm.result());
+        var program2 = Compiler.compile(schema, "(and (trait-lt \"long\" \"5\") (trait-eq \"string\" \"test\"))");
+        var vm2 = new SExpressionVM(environment, program2);
+        vm2.evaluate(bag);
+        assertTrue(vm2.result());
     }
 
     @Test
@@ -477,17 +556,22 @@ public class SExpressionVMTest {
 
         // In (trait-lt "field" "value"), it checks if field < value
         // We need a condition that will be false, so we use 5 < 5 which is false
-        vm.evaluate(Compiler.compile(schema, "(trait-lt \"long\" \"5\")"), bag);
-        assertFalse(vm.result());
+        var program1 = Compiler.compile(schema, "(trait-lt \"long\" \"5\")");
+        var vm1 = new SExpressionVM(environment, program1);
+        vm1.evaluate(bag);
+        assertFalse(vm1.result());
         
-        vm.reset();
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"string\" \"wrong\")"), bag);
-        assertFalse(vm.result());
+        // Test another false condition
+        var program2 = Compiler.compile(schema, "(trait-eq \"string\" \"wrong\")");
+        var vm2 = new SExpressionVM(environment, program2);
+        vm2.evaluate(bag);
+        assertFalse(vm2.result());
         
         // Now test the OR operation with both conditions false
-        vm.reset();
-        vm.evaluate(Compiler.compile(schema, "(or (trait-lt \"long\" \"5\") (trait-eq \"string\" \"wrong\"))"), bag);
-        assertFalse(vm.result());
+        var program3 = Compiler.compile(schema, "(or (trait-lt \"long\" \"5\") (trait-eq \"string\" \"wrong\"))");
+        var vm3 = new SExpressionVM(environment, program3);
+        vm3.evaluate(bag);
+        assertFalse(vm3.result());
     }
 
     // Tests for stack operations
@@ -500,7 +584,9 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(and (trait-eq \"long\" \"1\") (trait-eq \"long\" \"1\"))"), bag);
+        var program = Compiler.compile(schema, "(and (trait-eq \"long\" \"1\") (trait-eq \"long\" \"1\"))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -514,7 +600,9 @@ public class SExpressionVMTest {
         }));
 
         // The second condition is evaluated but then popped, so only the first condition affects the result
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"long\" \"1\")"), bag);
+        var program = Compiler.compile(schema, "(trait-eq \"long\" \"1\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -522,6 +610,9 @@ public class SExpressionVMTest {
 
     @Test
     void verifyStackUnderflowHandling() {
+        var program = Compiler.compile(schema, "(trait-eq \"long\" \"1\")");
+        var vm = new SExpressionVM(environment, program);
+
         // Test that stack underflow is handled properly
         assertThrows(IllegalStateException.class, () -> {
             vm.reset();
@@ -531,6 +622,9 @@ public class SExpressionVMTest {
 
     @Test
     void verifyDupWithEmptyStackHandling() {
+        var program = Compiler.compile(schema, "(trait-eq \"long\" \"1\")");
+        var vm = new SExpressionVM(environment, program);
+
         // Test that attempting to dup with an empty stack is handled properly
         assertThrows(IllegalStateException.class, () -> {
             vm.reset();
@@ -550,7 +644,9 @@ public class SExpressionVMTest {
 
         // Test that we can access a field even if its value is null
         // We'll use trait-eq with an empty string which should be false
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"nullField\" \"\")"), bag);
+        var program = Compiler.compile(schema, "(trait-eq \"nullField\" \"\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertFalse(vm.result());
     }
 
@@ -564,9 +660,11 @@ public class SExpressionVMTest {
         }));
 
         // Test a complex nested expression with multiple operations
-        vm.evaluate(Compiler.compile(schema, 
+        var program = Compiler.compile(schema, 
             "(and (or (trait-gt \"long\" \"5\") (trait-lt \"double\" \"1.0\")) " +
-            "(and (trait-eq \"string\" \"test\") (trait-eq \"boolean\" \"true\")))"), bag);
+            "(and (trait-eq \"string\" \"test\") (trait-eq \"boolean\" \"true\")))");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
         assertTrue(vm.result());
     }
 
@@ -579,19 +677,16 @@ public class SExpressionVMTest {
 
         // Test that a non-existent field is handled properly
         // We'll use a field that exists in the bag and one that doesn't
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"long\" \"1\")"), bag);
-        assertTrue(vm.result());
+        var program1 = Compiler.compile(schema, "(trait-eq \"long\" \"1\")");
+        var vm1 = new SExpressionVM(environment, program1);
+        vm1.evaluate(bag);
+        assertTrue(vm1.result());
         
-        // For the empty bag test, we'll just verify that the VM can be reset and reused
-        vm.reset();
-        
-        // We'll use a simple test that doesn't require field access
-        vm.evaluate(
-                Compiler.compile(schema, "(not (trait-eq \"long\" \"2\"))"),
-                new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {}))
-        );
-
-        assertTrue(vm.result());
+        // For the empty bag test, we'll just verify that the VM can handle an empty bag
+        var program2 = Compiler.compile(schema, "(not (trait-eq \"long\" \"2\"))");
+        var vm2 = new SExpressionVM(environment, program2);
+        vm2.evaluate(new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {})));
+        assertTrue(vm2.result());
     }
 
     @Test
@@ -601,14 +696,16 @@ public class SExpressionVMTest {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"long\" \"1\")"), bag);
-        assertTrue(vm.result());
+        // First evaluation
+        var program1 = Compiler.compile(schema, "(trait-eq \"long\" \"1\")");
+        var vm1 = new SExpressionVM(environment, program1);
+        vm1.evaluate(bag);
+        assertTrue(vm1.result());
 
-        vm.reset();
-        vm.reset(); // Multiple resets should not cause issues
-
-        vm.evaluate(Compiler.compile(schema, "(trait-eq \"long\" \"2\")"), bag);
-        assertFalse(vm.result());
+        // Second evaluation with a different VM instance
+        var program2 = Compiler.compile(schema, "(trait-eq \"long\" \"2\")");
+        var vm2 = new SExpressionVM(environment, program2);
+        vm2.evaluate(bag);
+        assertFalse(vm2.result());
     }
-
 }

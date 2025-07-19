@@ -6,6 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
+        <Logger name="io.exsql.s3xty.S3Xty" level="info" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
         <Logger name="io.exsql.s3xty" level="info" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>

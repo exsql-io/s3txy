@@ -28,13 +28,18 @@ public final class SExpressionVM {
     
     // Instruction handlers
     private final Map<OperationCode, InstructionHandler> instructionHandlers = new HashMap<>();
-
+    private final Program program;
     private final boolean useVectorAPI;
+
+    // Results array for storing multiple expression results
+    private final boolean[] results;
 
     /**
      * Creates a new SExpressionVM with the default instruction handlers.
      */
-    public SExpressionVM(final Map<String, String> environment) {
+    public SExpressionVM(final Map<String, String> environment, final Program program) {
+        this.program = program;
+        this.results = program.output();
         this.useVectorAPI = Boolean.parseBoolean(environment.getOrDefault("S3XTY_VM_USE_VECTOR_API", "false"));
         registerDefaultInstructionHandlers();
     }
@@ -42,10 +47,9 @@ public final class SExpressionVM {
     /**
      * Evaluates a program with the given value bag.
      *
-     * @param program the program to evaluate
      * @param bag the value bag to use for field lookups
      */
-    public void evaluate(final Program program, final CachedValueBag bag) {
+    public void evaluate(final CachedValueBag bag) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Evaluating: \n{}", program);
         }
@@ -77,6 +81,16 @@ public final class SExpressionVM {
      */
     public boolean result() {
         return this.stack[0] != null && ((BooleanValue) this.stack[0]).wrapped();
+    }
+    
+    /**
+     * Returns the results of evaluating multiple S-expressions.
+     * The results are stored in the order they were evaluated.
+     *
+     * @return the array of results
+     */
+    public boolean[] results() {
+        return this.results;
     }
 
     /**
@@ -192,6 +206,15 @@ public final class SExpressionVM {
         // Stack Operations
         instructionHandlers.put(OperationCode.DUP, (vm, _, _) -> vm.dup());
         instructionHandlers.put(OperationCode.POP, (vm, _, _) -> vm.pop());
+        
+        // Result Operations
+        instructionHandlers.put(OperationCode.STORE_RESULT, (vm, _, instruction) -> {
+            int index = (int) ((LongValue) instruction.operand(0)).wrapped();
+            boolean result = ((BooleanValue) vm.stack[vm.sp - 1]).wrapped();
+            
+            // Store the result
+            vm.results[index] = result;
+        });
         
         // Register binary operations
         registerBinaryOperation(OperationCode.LONG_EQ, Operation::nullSafeLongEq);

@@ -8,23 +8,27 @@ import java.util.List;
  */
 public final class Program {
 
-    private final String expression;
+    private final String[] expressions;
     private final List<Instruction> instructions;
     private int currentIndex = 0;
 
     /**
-     * Creates a new program with the given expression and instructions.
+     * Creates a new program with the given expressions and instructions.
      *
-     * @param expression the original expression
+     * @param expressions the original expressions
      * @param instructions the list of instructions
      * @throws IllegalArgumentException if the instructions list is null or empty
      */
-    Program(final String expression, final List<Instruction> instructions) {
+    Program(final String[] expressions, final List<Instruction> instructions) {
         if (instructions == null || instructions.isEmpty()) {
             throw new IllegalArgumentException("Instructions list cannot be null or empty");
         }
-        this.expression = expression;
+        this.expressions = expressions;
         this.instructions = List.copyOf(instructions);
+    }
+
+    public Program fork() {
+        return new Program(this.expressions, this.instructions);
     }
 
     /**
@@ -70,18 +74,18 @@ public final class Program {
         }
         this.currentIndex = index;
     }
-    
-    /**
-     * Gets the total number of instructions in the program.
-     *
-     * @return the number of instructions
-     */
-    public int size() {
-        return this.instructions.size();
+
+    public boolean[] output() {
+        return new boolean[this.expressions.length];
     }
 
     @Override
     public String toString() {
+        var expressionsToString = new StringBuilder();
+        for (int i = 0; i < this.expressions.length; i++) {
+            expressionsToString.append(i).append(": ").append(this.expressions[i]).append("\n\t\t\t");
+        }
+
         var instructionsToString = new StringBuilder();
         for (int i = 0; i < this.instructions.size(); i++) {
             instructionsToString.append(i).append(": ").append(this.instructions.get(i)).append("\n\t\t\t");
@@ -90,11 +94,12 @@ public final class Program {
         return String.format(
                 """
                     Program:
-                        expression: %s
+                        expressions:
+                            %s
                         instructions:
                             %s
                 """,
-                this.expression,
+                expressionsToString,
                 instructionsToString
         );
     }

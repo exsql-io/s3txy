@@ -164,6 +164,16 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) {
         return create(OperationCode.POP);
     }
     
+    /**
+     * Creates a new instruction for storing the top value on the stack in the results array.
+     *
+     * @param index the index in the results array where the value should be stored
+     * @return a new instruction
+     */
+    public static Instruction storeResult(final int index) {
+        return create(OperationCode.STORE_RESULT, Value.longValue(index));
+    }
+    
 
     @Override
     public @NotNull String toString() {

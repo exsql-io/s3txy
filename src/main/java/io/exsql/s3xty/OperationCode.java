@@ -36,5 +36,7 @@ public enum OperationCode {
     JUMP_IF_FALSE,  // Jump if top of stack is false
     // Stack Operations
     DUP,            // Duplicate the top value on the stack
-    POP             // Remove the top value from the stack
+    POP,            // Remove the top value from the stack
+    // Result Operations
+    STORE_RESULT    // Store the top value in the results array at the specified index
 }
