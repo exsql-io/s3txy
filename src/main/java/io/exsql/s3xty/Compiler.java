@@ -78,7 +78,7 @@ public final class Compiler {
             var elapsed = stopWatch.elapsed(TimeUnit.MILLISECONDS);
             LOGGER.debug("compile phase took: {}ms", elapsed);
 
-            return new Program(expressions, instructions);
+            return new Program(expressions, instructions.toArray(new Instruction[0]));
         } catch (final Exception exception) {
             LOGGER.error("Error compiling expressions: {}", String.join("; ", expressions), exception);
             throw new RuntimeException("Error compiling expressions: " + exception, exception);

@@ -3,11 +3,13 @@ package io.exsql.s3xty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serializable;
+
 /**
  * Represents an instruction in the VM.
  * An instruction consists of an operation code and optional operands.
  */
-public record Instruction(OperationCode operation, @Nullable Value[] operands) {
+public record Instruction(OperationCode operation, @Nullable Value[] operands) implements Serializable {
 
     /**
      * Creates a new instruction with the given operation code and no operands.
@@ -187,7 +189,7 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) {
             }
         }
 
-        return String.format("%s(%s)", this.operation, operandsToString);
+        return String.format("%s(%s)", this.operation.name(), operandsToString);
     }
 
 }

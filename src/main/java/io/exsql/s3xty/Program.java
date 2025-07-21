@@ -1,16 +1,19 @@
 package io.exsql.s3xty;
 
-import java.util.List;
+import java.io.*;
 
 /**
  * Represents a program that can be executed by the VM.
  * A program consists of a list of instructions and the original expression.
  */
-public final class Program {
+public final class Program implements Serializable {
 
-    private final String[] expressions;
-    private final List<Instruction> instructions;
-    private int currentIndex = 0;
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    private String[] expressions;
+    private Instruction[] instructions;
+    private transient int currentIndex = 0;
 
     /**
      * Creates a new program with the given expressions and instructions.
@@ -19,12 +22,13 @@ public final class Program {
      * @param instructions the list of instructions
      * @throws IllegalArgumentException if the instructions list is null or empty
      */
-    Program(final String[] expressions, final List<Instruction> instructions) {
-        if (instructions == null || instructions.isEmpty()) {
+    Program(final String[] expressions, final Instruction[] instructions) {
+        if (instructions == null || instructions.length == 0) {
             throw new IllegalArgumentException("Instructions list cannot be null or empty");
         }
+
         this.expressions = expressions;
-        this.instructions = List.copyOf(instructions);
+        this.instructions = instructions;
     }
 
     public Program fork() {
@@ -37,7 +41,7 @@ public final class Program {
      * @return true if there are more instructions, false otherwise
      */
     public boolean hasNext() {
-        return this.currentIndex < this.instructions.size();
+        return this.currentIndex < this.instructions.length;
     }
 
     /**
@@ -50,7 +54,7 @@ public final class Program {
         if (!hasNext()) {
             throw new IndexOutOfBoundsException("No more instructions");
         }
-        return this.instructions.get(currentIndex++);
+        return this.instructions[currentIndex++];
     }
     
     /**
@@ -69,7 +73,7 @@ public final class Program {
      * @throws IndexOutOfBoundsException if the index is out of bounds
      */
     public void setCurrentIndex(int index) {
-        if (index < 0 || index >= this.instructions.size()) {
+        if (index < 0 || index >= this.instructions.length) {
             throw new IndexOutOfBoundsException("Invalid instruction index: " + index);
         }
         this.currentIndex = index;
@@ -87,8 +91,8 @@ public final class Program {
         }
 
         var instructionsToString = new StringBuilder();
-        for (int i = 0; i < this.instructions.size(); i++) {
-            instructionsToString.append(i).append(": ").append(this.instructions.get(i)).append("\n\t\t\t");
+        for (int i = 0; i < this.instructions.length; i++) {
+            instructionsToString.append(i).append(": ").append(this.instructions[i]).append("\n\t\t\t");
         }
 
         return String.format(
@@ -102,6 +106,19 @@ public final class Program {
                 expressionsToString,
                 instructionsToString
         );
+    }
+
+    @Serial
+    private void writeObject(final ObjectOutputStream oos) throws IOException {
+        oos.writeObject(this.expressions);
+        oos.writeObject(this.instructions);
+    }
+
+    @Serial
+    private void readObject(final ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        this.expressions = (String[]) ois.readObject();
+        this.instructions = (Instruction[]) ois.readObject();
+        this.currentIndex = 0;
     }
 
 }

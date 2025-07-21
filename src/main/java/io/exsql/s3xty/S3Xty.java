@@ -42,7 +42,9 @@ public class S3Xty {
             LOGGER.info("Starting evaluation of {} expressions", expressions.length);
             var globalStopWatch = Stopwatch.createStarted();
             for (var evaluation = 0; evaluation < evaluations; evaluation++) {
-                threads.add(Thread.ofVirtual().start(createTask(evaluation, program.fork(), initializeBags(data))));
+                var thread = new Thread(createTask(evaluation, program.fork(), initializeBags(data)));
+                thread.start();
+                threads.add(thread);
             }
 
             for (var thread: threads) {

@@ -152,13 +152,13 @@ public final class SExpressionVM {
      */
     private void registerDefaultInstructionHandlers() {
         // General Operations
-        instructionHandlers.put(OperationCode.HALT, (_, _, _) -> {
+        instructionHandlers.put(OperationCode.HALT, (vm, program, instruction) -> {
             // Do nothing, just halt execution
         });
         
         // Memory Operations
-        instructionHandlers.put(OperationCode.LOAD, (vm, _, instruction) -> vm.push(instruction.operand(0)));
-        instructionHandlers.put(OperationCode.GET_FIELD, (vm, _, _) -> {
+        instructionHandlers.put(OperationCode.LOAD, (vm, program, instruction) -> vm.push(instruction.operand(0)));
+        instructionHandlers.put(OperationCode.GET_FIELD, (vm, program, instruction) -> {
             var fieldPosition = vm.pop();
             var fieldType = vm.pop();
             var dataType = ((FieldTypeValue) fieldType).dataType();
@@ -186,7 +186,7 @@ public final class SExpressionVM {
         });
         
         // Combining Operations
-        instructionHandlers.put(OperationCode.NOT, (vm, _, _) -> vm.push(Value.booleanValue(!((BooleanValue) vm.pop()).wrapped())));
+        instructionHandlers.put(OperationCode.NOT, (vm, program, instruction) -> vm.push(Value.booleanValue(!((BooleanValue) vm.pop()).wrapped())));
         
         // Control Flow Operations
         instructionHandlers.put(OperationCode.JUMP_IF_TRUE, (vm, program, instruction) -> {
@@ -204,11 +204,11 @@ public final class SExpressionVM {
         });
 
         // Stack Operations
-        instructionHandlers.put(OperationCode.DUP, (vm, _, _) -> vm.dup());
-        instructionHandlers.put(OperationCode.POP, (vm, _, _) -> vm.pop());
+        instructionHandlers.put(OperationCode.DUP, (vm, program, instruction) -> vm.dup());
+        instructionHandlers.put(OperationCode.POP, (vm, program, instruction) -> vm.pop());
         
         // Result Operations
-        instructionHandlers.put(OperationCode.STORE_RESULT, (vm, _, instruction) -> {
+        instructionHandlers.put(OperationCode.STORE_RESULT, (vm, program, instruction) -> {
             int index = (int) ((LongValue) instruction.operand(0)).wrapped();
             boolean result = ((BooleanValue) vm.stack[vm.sp - 1]).wrapped();
             
@@ -246,7 +246,7 @@ public final class SExpressionVM {
      * @param operation the operation function that takes two values and returns a boolean result
      */
     private void registerBinaryOperation(OperationCode opCode, BiFunction<Value, Value, Boolean> operation) {
-        instructionHandlers.put(opCode, (vm, _, _) -> vm.push(Value.booleanValue(operation.apply(vm.pop(), vm.pop()))));
+        instructionHandlers.put(opCode, (vm, program, instruction) -> vm.push(Value.booleanValue(operation.apply(vm.pop(), vm.pop()))));
     }
     
     /**
