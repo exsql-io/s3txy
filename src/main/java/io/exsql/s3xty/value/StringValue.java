@@ -1,6 +1,7 @@
-package io.exsql.s3xty;
+package io.exsql.s3xty.value;
 
 import org.apache.spark.unsafe.types.UTF8String;
+import org.jetbrains.annotations.NotNull;
 
 public record StringValue(UTF8String wrapped) implements Value {
     @Override
@@ -19,7 +20,7 @@ public record StringValue(UTF8String wrapped) implements Value {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return String.format("string(%s)", this.wrapped);
     }
 }

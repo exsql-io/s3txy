@@ -1,4 +1,4 @@
-package io.exsql.s3xty;
+package io.exsql.s3xty.value;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,7 +1,9 @@
 package io.exsql.s3xty;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
 import org.apache.spark.sql.catalyst.util.ArrayData;
+import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.unsafe.types.UTF8String;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,11 @@ public class SExpressionVMTest {
 
     private final StructType schema = StructType.fromDDL("long LONG, double DOUBLE, boolean BOOLEAN");
 
+    private final Object2ObjectOpenHashMap<UTF8String, DataType> fieldTypes = SchemaHelper.convert(schema);
+
     @Test
     void verifyTraitEqLong() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -31,7 +35,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitEqString() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -42,7 +46,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitEqDouble() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -53,7 +57,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitEqBoolean() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
 
@@ -65,7 +69,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNotTraitEqLong() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -77,7 +81,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNotTraitEqString() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -89,7 +93,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNotTraitEqDouble() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -101,7 +105,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNotTraitEqBoolean() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
 
@@ -113,7 +117,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyOrTraitEq() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
@@ -126,7 +130,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNestedOrTraitEq() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
@@ -140,7 +144,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyOrMultipleTraitEq() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
@@ -154,7 +158,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyAndTraitEq() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
@@ -167,7 +171,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNestedAndTraitEq() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
@@ -181,7 +185,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyAndMultipleTraitEq() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
@@ -195,7 +199,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitNeLong() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -207,7 +211,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitNeString() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -219,7 +223,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitNeDouble() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -231,7 +235,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitNeBoolean() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
 
@@ -243,7 +247,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNotTraitNeLong() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -255,7 +259,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNotTraitNeString() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -267,7 +271,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNotTraitNeDouble() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -279,7 +283,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyNotTraitNeBoolean() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
 
@@ -291,7 +295,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLtLong() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -303,7 +307,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLtString() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -315,7 +319,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLtDouble() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -327,7 +331,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLeLong() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -339,7 +343,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLeString() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -351,7 +355,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLeDouble() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -363,7 +367,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitGtLong() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -375,7 +379,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitGtString() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -387,7 +391,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitGtDouble() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -399,7 +403,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitGeLong() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -411,7 +415,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitGeString() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -423,7 +427,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitGeDouble() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -437,7 +441,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLtLongWithDifferentValues() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -451,7 +455,7 @@ public class SExpressionVMTest {
     void verifyTraitGtLongWithDifferentValues() {
         // After examining the existing tests, I understand that
         // in (trait-gt "field" "value"), it checks if field > value
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("10")})
         }));
 
@@ -464,7 +468,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLtDoubleWithDifferentValues() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
         }));
 
@@ -477,7 +481,7 @@ public class SExpressionVMTest {
     @Test
     void verifyTraitGtDoubleWithDifferentValues() {
         // In (trait-gt "field" "value"), it checks if field > value
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("3.5")})
         }));
 
@@ -490,7 +494,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitLtStringWithDifferentValues() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
         }));
 
@@ -504,7 +508,7 @@ public class SExpressionVMTest {
     void verifyTraitGtStringWithDifferentValues() {
         // In (trait-gt "field" "value"), the comparison is actually value > field
         // This is because values are popped in reverse order in registerBinaryOperation
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("zebra")})
         }));
 
@@ -517,7 +521,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyTraitNeWithDifferentValues() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -529,7 +533,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyAndWithAllTrueConditions() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("3")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("test")})
         }));
@@ -549,7 +553,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyOrWithAllFalseConditions() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("5")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("test")})
         }));
@@ -580,7 +584,7 @@ public class SExpressionVMTest {
     void verifyDupOperation() {
         // Create a program that uses DUP operation
         // (dup (trait-eq "long" "1"))
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -594,7 +598,7 @@ public class SExpressionVMTest {
     void verifyPopOperation() {
         // Create a program that uses POP operation
         // This test verifies that popping a value works correctly
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
         }));
@@ -638,7 +642,7 @@ public class SExpressionVMTest {
     void verifyNullValueHandling() {
         // For this test, we'll check if a field exists rather than comparing with null
         // since the S-expression language might not support direct null comparisons
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("nullField"), null})
         }));
 
@@ -652,7 +656,7 @@ public class SExpressionVMTest {
 
     @Test
     void verifyComplexNestedExpression() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("10")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("2.5")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("test")}),
@@ -671,7 +675,7 @@ public class SExpressionVMTest {
     @Test
     void verifyEmptyBagHandling() {
         // For this test, we'll use a non-empty bag but with a field that doesn't exist in the bag
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -685,14 +689,14 @@ public class SExpressionVMTest {
         // For the empty bag test, we'll just verify that the VM can handle an empty bag
         var program2 = Compiler.compile(schema, "(not (trait-eq \"long\" \"2\"))");
         var vm2 = new SExpressionVM(environment, program2);
-        vm2.evaluate(new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {})));
+        vm2.evaluate(new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {})));
         assertTrue(vm2.result());
     }
 
     @Test
     void verifyMultipleResets() {
         // Test that multiple resets work correctly
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 
@@ -708,4 +712,5 @@ public class SExpressionVMTest {
         vm2.evaluate(bag);
         assertFalse(vm2.result());
     }
+
 }

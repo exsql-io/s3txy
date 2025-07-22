@@ -1,4 +1,4 @@
-package io.exsql.s3xty;
+package io.exsql.s3xty.value;
 
 import org.apache.spark.sql.types.DataType;
 import org.apache.spark.unsafe.types.UTF8String;
@@ -17,6 +17,22 @@ public interface Value {
 
     default boolean toBoolean() {
         throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to boolean");
+    }
+
+    default long[] toLongs() {
+        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to long");
+    }
+
+    default double[] toDoubles() {
+        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to double");
+    }
+
+    default boolean[] toBooleans() {
+        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to boolean");
+    }
+
+    default boolean isNull() {
+        return this == NULL_VALUE;
     }
 
     static LongValue longValue(final String token) {
@@ -53,6 +69,22 @@ public interface Value {
 
     static NullValue nullValue() {
         return NULL_VALUE;
+    }
+
+    static StringArrayValue stringArrayValue(final UTF8String delimiter, final UTF8String wrapped) {
+        return new StringArrayValue(wrapped.splitSQL(delimiter, 0));
+    }
+
+    static LongArrayValue longArrayValue(final UTF8String delimiter, final UTF8String wrapped) {
+        return new LongArrayValue(new StringArrayValue(wrapped.splitSQL(delimiter, 0)).toLongs());
+    }
+
+    static DoubleArrayValue doubleArrayValue(final UTF8String delimiter, final UTF8String wrapped) {
+        return new DoubleArrayValue(new StringArrayValue(wrapped.splitSQL(delimiter, 0)).toDoubles());
+    }
+
+    static BooleanArrayValue booleanArrayValue(final UTF8String delimiter, final UTF8String wrapped) {
+        return new BooleanArrayValue(new StringArrayValue(wrapped.splitSQL(delimiter, 0)).toBooleans());
     }
 
 }

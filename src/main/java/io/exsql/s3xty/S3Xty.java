@@ -1,8 +1,11 @@
 package io.exsql.s3xty;
 
 import com.google.common.base.Stopwatch;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.spark.sql.catalyst.util.ArrayData;
+import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.StructType;
+import org.apache.spark.unsafe.types.UTF8String;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,7 @@ public class S3Xty {
 
             LOGGER.info("Using schema: {}", args[2]);
             var schema = StructType.fromDDL(args[2]);
+            var fieldTypes = SchemaHelper.convert(schema);
 
             var expressions = new String[args.length - 3];
             System.arraycopy(args, 3, expressions, 0, expressions.length);
@@ -42,7 +46,7 @@ public class S3Xty {
             LOGGER.info("Starting evaluation of {} expressions", expressions.length);
             var globalStopWatch = Stopwatch.createStarted();
             for (var evaluation = 0; evaluation < evaluations; evaluation++) {
-                var thread = new Thread(createTask(evaluation, program.fork(), initializeBags(data)));
+                var thread = new Thread(createTask(evaluation, program.fork(), initializeBags(fieldTypes, data)));
                 thread.start();
                 threads.add(thread);
             }
@@ -60,7 +64,7 @@ public class S3Xty {
         }
     }
 
-    private static @NotNull Runnable createTask(final int evaluation, final Program program, final CachedValueBag[] bags) {
+    private static @NotNull Runnable createTask(final int evaluation, final Program program, final CachedArrayDataAccessor[] bags) {
         return () -> {
             var vm = new SExpressionVM(System.getenv(), program);
             var stopWatch = Stopwatch.createStarted();
@@ -80,10 +84,12 @@ public class S3Xty {
         };
     }
 
-    private static CachedValueBag[] initializeBags(final ArrayData[] data) {
-        var bags = new CachedValueBag[data.length];
+    private static CachedArrayDataAccessor[] initializeBags(final Object2ObjectOpenHashMap<UTF8String, DataType> fieldTypes,
+                                                            final ArrayData[] data) {
+
+        var bags = new CachedArrayDataAccessor[data.length];
         for (var i = 0; i < data.length; i++) {
-            bags[i] = new CachedValueBag(data[i]);
+            bags[i] = new CachedArrayDataAccessor(fieldTypes, data[i]);
         }
         return bags;
     }

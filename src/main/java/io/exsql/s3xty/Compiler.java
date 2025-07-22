@@ -1,6 +1,7 @@
 package io.exsql.s3xty;
 
 import com.google.common.base.Stopwatch;
+import io.exsql.s3xty.value.Value;
 import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructType;

@@ -1,5 +1,6 @@
 package io.exsql.s3xty;
 
+import io.exsql.s3xty.value.*;
 import org.apache.spark.unsafe.types.UTF8String;
 
 public final class Operation {

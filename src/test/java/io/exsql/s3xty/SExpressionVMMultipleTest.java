@@ -1,7 +1,9 @@
 package io.exsql.s3xty;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
 import org.apache.spark.sql.catalyst.util.ArrayData;
+import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.unsafe.types.UTF8String;
 import org.junit.jupiter.api.Test;
@@ -16,9 +18,11 @@ public class SExpressionVMMultipleTest {
 
     private final StructType schema = StructType.fromDDL("long LONG, double DOUBLE, boolean BOOLEAN");
 
+    private final Object2ObjectOpenHashMap<UTF8String, DataType> fieldTypes = SchemaHelper.convert(schema);
+
     @Test
     void verifyMultipleExpressions() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("2.5")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
@@ -48,7 +52,7 @@ public class SExpressionVMMultipleTest {
     @Test
     void verifyComplexExpressions() {
         // Let's simplify this test to focus on the core functionality
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("10")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("2.5")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
@@ -94,7 +98,7 @@ public class SExpressionVMMultipleTest {
 
     @Test
     void verifyLargeNumberOfExpressions() {
-        var bag = new CachedValueBag(ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 

@@ -1,5 +1,6 @@
 package io.exsql.s3xty;
 
+import io.exsql.s3xty.value.*;
 import org.apache.spark.sql.types.DataTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public final class SExpressionVM {
     private int sp = 0;
 
     // Execution context
-    private CachedValueBag valueBag;
+    private CachedArrayDataAccessor valueBag;
     
     // Instruction handlers
     private final Map<OperationCode, InstructionHandler> instructionHandlers = new HashMap<>();
@@ -49,7 +50,7 @@ public final class SExpressionVM {
      *
      * @param bag the value bag to use for field lookups
      */
-    public void evaluate(final CachedValueBag bag) {
+    public void evaluate(final CachedArrayDataAccessor bag) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Evaluating: \n{}", program);
         }
@@ -132,7 +133,7 @@ public final class SExpressionVM {
      *
      * @return the value bag
      */
-    public CachedValueBag getValueBag() {
+    public CachedArrayDataAccessor getValueBag() {
         return this.valueBag;
     }
     
