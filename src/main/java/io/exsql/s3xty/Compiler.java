@@ -156,11 +156,29 @@ public final class Compiler {
                     instructions.set(jumpIndex, Instruction.jumpIfFalse(instructions.size()));
                 }
                 break;
+            case Keywords.TRAIT_EXISTS:
+                parseUnaryOperator(tokens, instructions, schema);
+                break;
             default:
                 parseBinaryOperator(tokens, instructions, schema);
                 break;
         }
         tokens.nextToken(); // skip )
+    }
+
+    private static void parseUnaryOperator(final StreamTokenizer tokens, final List<Instruction> instructions, final StructType schema) throws IOException {
+        var operator = tokens.sval;
+
+        tokens.nextToken(); // consume operator
+        parseGetField(tokens, instructions, schema); // parse the get field operation
+
+        switch (operator) {
+            case Keywords.TRAIT_EXISTS:
+                instructions.add(Instruction.isNotNull());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown operator: " + operator);
+        }
     }
 
     private static void parseBinaryOperator(final StreamTokenizer tokens, final List<Instruction> instructions, final StructType schema) throws IOException {
@@ -228,6 +246,9 @@ public final class Compiler {
                 } else {
                     instructions.add(Instruction.stringGreaterThanOrEqual());
                 }
+                break;
+            case Keywords.TRAIT_EXISTS:
+                instructions.add(Instruction.isNotNull());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown operator: " + operator);

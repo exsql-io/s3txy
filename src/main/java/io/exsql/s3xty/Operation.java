@@ -116,6 +116,10 @@ public final class Operation {
                 nullSafeUTF8StringCompare(((StringValue) right).wrapped(), ((StringValue) left).wrapped()) >= 0;
     }
 
+    public static boolean isNotNull(final Value value) {
+        return value != Value.NULL_VALUE;
+    }
+
     private static int nullSafeUTF8StringCompare(final UTF8String right, final UTF8String left) {
         if (right == null) return -1;
         if (left == null) return 1;

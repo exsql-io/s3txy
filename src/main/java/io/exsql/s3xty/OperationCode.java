@@ -38,5 +38,7 @@ public enum OperationCode {
     DUP,            // Duplicate the top value on the stack
     POP,            // Remove the top value from the stack
     // Result Operations
-    STORE_RESULT    // Store the top value in the results array at the specified index
+    STORE_RESULT,    // Store the top value in the results array at the specified index
+    // Nullability
+    IS_NOT_NULL,
 }

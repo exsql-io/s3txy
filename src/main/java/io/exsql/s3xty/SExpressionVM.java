@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * A virtual machine for evaluating S-expressions.
@@ -216,7 +217,10 @@ public final class SExpressionVM {
             // Store the result
             vm.results[index] = result;
         });
-        
+
+        // Register unary operations
+        registerUnaryOperation(OperationCode.IS_NOT_NULL, Operation::isNotNull);
+
         // Register binary operations
         registerBinaryOperation(OperationCode.LONG_EQ, Operation::nullSafeLongEq);
         registerBinaryOperation(OperationCode.DOUBLE_EQ, Operation::nullSafeDoubleEq);
@@ -246,16 +250,26 @@ public final class SExpressionVM {
      * @param opCode the operation code
      * @param operation the operation function that takes two values and returns a boolean result
      */
-    private void registerBinaryOperation(OperationCode opCode, BiFunction<Value, Value, Boolean> operation) {
+    private void registerBinaryOperation(final OperationCode opCode, final BiFunction<Value, Value, Boolean> operation) {
         instructionHandlers.put(opCode, (vm, program, instruction) -> vm.push(Value.booleanValue(operation.apply(vm.pop(), vm.pop()))));
     }
-    
+
+    /**
+     * Registers a unary operation handler.
+     *
+     * @param opCode the operation code
+     * @param operation the operation function that takes one values and returns a boolean result
+     */
+    private void registerUnaryOperation(final OperationCode opCode, final Function<Value, Boolean> operation) {
+        instructionHandlers.put(opCode, (vm, program, instruction) -> vm.push(Value.booleanValue(operation.apply(vm.pop()))));
+    }
+
     /**
      * Interface for instruction handlers.
      */
     @FunctionalInterface
     private interface InstructionHandler {
-        void execute(SExpressionVM vm, Program program, Instruction instruction);
+        void execute(final SExpressionVM vm, final Program program, final Instruction instruction);
     }
 
 }

@@ -713,4 +713,49 @@ public class SExpressionVMTest {
         assertFalse(vm2.result());
     }
 
+    @Test
+    void verifyTraitExistsLong() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-exists \"long\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitExistsString() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-exists \"string\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitExistsDouble() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-exists \"double\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitExistsBoolean() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
+        }));
+
+        var program = Compiler.compile(schema, "(trait-exists \"boolean\")");
+        var vm = new SExpressionVM(environment, program);
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
 }

@@ -142,6 +142,10 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) i
         return create(OperationCode.DOUBLE_GE);
     }
 
+    public static Instruction isNotNull() {
+        return create(OperationCode.IS_NOT_NULL);
+    }
+
     public static Instruction not() {
         return create(OperationCode.NOT);
     }
