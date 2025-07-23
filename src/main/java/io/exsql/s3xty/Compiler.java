@@ -185,7 +185,7 @@ public final class Compiler {
 
         tokens.nextToken(); // consume operator
         var dataType = parseGetField(tokens, instructions, schema); // parse the get field operation
-        parseArgument(tokens, instructions, dataType, isCaseInsensitiveOperator(operator)); // parse the constant value to check against
+        parseArgument(tokens, instructions, dataType, operator); // parse the constant value to check against
 
         switch (operator) {
             case Keywords.TRAIT_EQ:
@@ -249,6 +249,9 @@ public final class Compiler {
             case Keywords.TRAIT_CI_EQ:
                 instructions.add(Instruction.stringCiEqual());
                 break;
+            case Keywords.TRAIT_REGEX:
+                instructions.add(Instruction.stringRegexpMatch());
+                break;
             default:
                 throw new IllegalArgumentException("Unknown operator: " + operator);
         }
@@ -278,7 +281,7 @@ public final class Compiler {
     private static void parseArgument(final StreamTokenizer tokens,
                                       final List<Instruction> instructions,
                                       final DataType dataType,
-                                      final boolean caseInsensitive) throws IOException {
+                                      final String operator) throws IOException {
 
         try {
             if (dataType != null) {
@@ -289,12 +292,12 @@ public final class Compiler {
                 } else if (dataType.equals(DataTypes.BooleanType)) {
                     instructions.add(Instruction.load(Value.booleanValue(tokens.sval)));
                 } else if (dataType.equals(DataTypes.StringType)) {
-                    parseStringArgument(tokens, instructions, caseInsensitive);
+                    parseStringArgument(tokens, instructions, operator);
                 } else {
                     throw new IllegalArgumentException("Unsupported data type: " + dataType);
                 }
             } else {
-                parseStringArgument(tokens, instructions, caseInsensitive);
+                parseStringArgument(tokens, instructions, operator);
             }
         } catch (final NumberFormatException nfe) {
             throw new IllegalArgumentException("Invalid value for type " + dataType + ": " + tokens.sval, nfe);
@@ -303,14 +306,12 @@ public final class Compiler {
         tokens.nextToken(); // consume argument
     }
 
-    private static void parseStringArgument(final StreamTokenizer tokens, final List<Instruction> instructions, final boolean caseInsensitive) {
-        if (caseInsensitive) instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval)).toLowercase()));
-        else instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
-    }
-
-    private static boolean isCaseInsensitiveOperator(final String operator) {
-        if (operator.equals(Keywords.TRAIT_CI_EQ)) return true;
-        return false;
+    private static void parseStringArgument(final StreamTokenizer tokens, final List<Instruction> instructions, final String operator) {
+        switch (operator) {
+            case Keywords.TRAIT_CI_EQ -> instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval)).toLowercase()));
+            case Keywords.TRAIT_REGEX -> instructions.add(Instruction.load(Value.regexpValue(tokens.sval)));
+            default -> instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
+        }
     }
 
 }

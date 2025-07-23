@@ -769,4 +769,15 @@ public class SExpressionVMTest {
         assertTrue(vm.result());
     }
 
+    @Test
+    void verifyTraitRegexpString() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("STRING")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-regex \"string\" \"(?i)(string)\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
 }

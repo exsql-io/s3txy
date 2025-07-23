@@ -129,6 +129,11 @@ public final class Operation {
         return value != Value.NULL_VALUE;
     }
 
+    public static boolean stringRegexMatch(final Value right, final Value left) {
+        if (right instanceof RegexpValue) return ((RegexpValue) right).matches(left);
+        return ((RegexpValue) left).matches(right);
+    }
+
     private static int nullSafeUTF8StringCompare(final UTF8String right, final UTF8String left) {
         if (right == null) return -1;
         if (left == null) return 1;

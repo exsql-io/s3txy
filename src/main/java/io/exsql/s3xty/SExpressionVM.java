@@ -243,6 +243,7 @@ public final class SExpressionVM {
         registerBinaryOperation(OperationCode.LONG_GE, Operation::nullSafeLongGe);
         registerBinaryOperation(OperationCode.DOUBLE_GE, Operation::nullSafeDoubleGe);
         registerBinaryOperation(OperationCode.STRING_GE, (v1, v2) -> Operation.nullSafeStringGe(v1, v2, useVectorAPI));
+        registerBinaryOperation(OperationCode.STRING_REGEXP_MATCH, Operation::stringRegexMatch);
     }
     
     /**

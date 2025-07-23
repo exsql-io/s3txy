@@ -150,6 +150,10 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) i
         return create(OperationCode.STRING_CI_EQ);
     }
 
+    public static Instruction stringRegexpMatch() {
+        return create(OperationCode.STRING_REGEXP_MATCH);
+    }
+
     public static Instruction not() {
         return create(OperationCode.NOT);
     }

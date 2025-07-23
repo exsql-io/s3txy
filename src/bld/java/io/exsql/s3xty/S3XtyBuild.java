@@ -20,7 +20,8 @@ public class S3XtyBuild extends Project {
         repositories = List.of(MAVEN_CENTRAL, RIFE2_RELEASES);
         scope(compile)
                 .include(dependency("it.unimi.dsi", "fastutil", version(8, 5, 16)))
-                .include(dependency("com.google.guava", "guava", Version.parse("33.4.8-jre")));
+                .include(dependency("com.google.guava", "guava", Version.parse("33.4.8-jre")))
+                .include(dependency("com.google.re2j", "re2j", version(1, 8)));
 
         scope(provided)
                 .include(dependency("org.apache.spark", "spark-sql_2.13", version(3,5,6)));

@@ -55,6 +55,10 @@ public interface Value {
         return new StringValue(token, false);
     }
 
+    static RegexpValue regexpValue(final String pattern) {
+        return new RegexpValue(com.google.re2j.Pattern.compile(pattern));
+    }
+
     static FieldTypeValue fieldTypeValue(final DataType dataType) {
         return new FieldTypeValue(dataType);
     }
