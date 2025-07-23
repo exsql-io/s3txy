@@ -32,6 +32,15 @@ public final class Operation {
                 nullSafeUTF8StringEq(((StringValue) right).wrapped(), ((StringValue) left).wrapped());
     }
 
+    public static boolean nullSafeStringCiEq(final Value right, final Value left, final boolean useVectorAPI) {
+        if (!(left instanceof StringValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+
+        var l = ((StringValue) left).lowercase() ? ((StringValue) left).wrapped(): ((StringValue) left).wrapped().toLowerCase();
+        var r = ((StringValue) right).lowercase() ? ((StringValue) right).wrapped(): ((StringValue) right).wrapped().toLowerCase();
+        return useVectorAPI ? VectorOperation.nullSafeUTF8StringEq(r, l): nullSafeUTF8StringEq(r, l);
+    }
+
     private static boolean nullSafeUTF8StringEq(final UTF8String right, final UTF8String left) {
         return left != null && left.equals(right);
     }

@@ -52,7 +52,7 @@ public interface Value {
     }
 
     static StringValue stringValue(final UTF8String token) {
-        return new StringValue(token);
+        return new StringValue(token, false);
     }
 
     static FieldTypeValue fieldTypeValue(final DataType dataType) {

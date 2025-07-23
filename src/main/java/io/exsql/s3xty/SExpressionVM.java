@@ -226,6 +226,7 @@ public final class SExpressionVM {
         registerBinaryOperation(OperationCode.DOUBLE_EQ, Operation::nullSafeDoubleEq);
         registerBinaryOperation(OperationCode.BOOLEAN_EQ, Operation::nullSafeBooleanEq);
         registerBinaryOperation(OperationCode.STRING_EQ, (v1, v2) -> Operation.nullSafeStringEq(v1, v2, useVectorAPI));
+        registerBinaryOperation(OperationCode.STRING_CI_EQ, (v1, v2) -> Operation.nullSafeStringCiEq(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.LONG_NE, (v1, v2) -> !Operation.nullSafeLongEq(v1, v2));
         registerBinaryOperation(OperationCode.DOUBLE_NE, (v1, v2) -> !Operation.nullSafeDoubleEq(v1, v2));
         registerBinaryOperation(OperationCode.BOOLEAN_NE, (v1, v2) -> !Operation.nullSafeBooleanEq(v1, v2));

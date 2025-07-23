@@ -758,4 +758,15 @@ public class SExpressionVMTest {
         assertTrue(vm.result());
     }
 
+    @Test
+    void verifyTraitCiEqString() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("STRING")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-ci-eq \"string\" \"string\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
 }

@@ -146,6 +146,10 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) i
         return create(OperationCode.IS_NOT_NULL);
     }
 
+    public static Instruction stringCiEqual() {
+        return create(OperationCode.STRING_CI_EQ);
+    }
+
     public static Instruction not() {
         return create(OperationCode.NOT);
     }

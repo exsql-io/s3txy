@@ -172,13 +172,12 @@ public final class Compiler {
         tokens.nextToken(); // consume operator
         parseGetField(tokens, instructions, schema); // parse the get field operation
 
-        switch (operator) {
-            case Keywords.TRAIT_EXISTS:
-                instructions.add(Instruction.isNotNull());
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown operator: " + operator);
+        if (operator.equals(Keywords.TRAIT_EXISTS)) {
+            instructions.add(Instruction.isNotNull());
+            return;
         }
+
+        throw new IllegalArgumentException("Unknown operator: " + operator);
     }
 
     private static void parseBinaryOperator(final StreamTokenizer tokens, final List<Instruction> instructions, final StructType schema) throws IOException {
@@ -186,7 +185,7 @@ public final class Compiler {
 
         tokens.nextToken(); // consume operator
         var dataType = parseGetField(tokens, instructions, schema); // parse the get field operation
-        parseArgument(tokens, instructions, dataType); // parse the constant value to check against
+        parseArgument(tokens, instructions, dataType, isCaseInsensitiveOperator(operator)); // parse the constant value to check against
 
         switch (operator) {
             case Keywords.TRAIT_EQ:
@@ -247,8 +246,8 @@ public final class Compiler {
                     instructions.add(Instruction.stringGreaterThanOrEqual());
                 }
                 break;
-            case Keywords.TRAIT_EXISTS:
-                instructions.add(Instruction.isNotNull());
+            case Keywords.TRAIT_CI_EQ:
+                instructions.add(Instruction.stringCiEqual());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown operator: " + operator);
@@ -276,7 +275,11 @@ public final class Compiler {
         return dataType;
     }
 
-    private static void parseArgument(final StreamTokenizer tokens, final List<Instruction> instructions, final DataType dataType) throws IOException {
+    private static void parseArgument(final StreamTokenizer tokens,
+                                      final List<Instruction> instructions,
+                                      final DataType dataType,
+                                      final boolean caseInsensitive) throws IOException {
+
         try {
             if (dataType != null) {
                 if (dataType.equals(DataTypes.LongType)) {
@@ -286,18 +289,28 @@ public final class Compiler {
                 } else if (dataType.equals(DataTypes.BooleanType)) {
                     instructions.add(Instruction.load(Value.booleanValue(tokens.sval)));
                 } else if (dataType.equals(DataTypes.StringType)) {
-                    instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
+                    parseStringArgument(tokens, instructions, caseInsensitive);
                 } else {
                     throw new IllegalArgumentException("Unsupported data type: " + dataType);
                 }
             } else {
-                instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
+                parseStringArgument(tokens, instructions, caseInsensitive);
             }
         } catch (final NumberFormatException nfe) {
             throw new IllegalArgumentException("Invalid value for type " + dataType + ": " + tokens.sval, nfe);
         }
 
         tokens.nextToken(); // consume argument
+    }
+
+    private static void parseStringArgument(final StreamTokenizer tokens, final List<Instruction> instructions, final boolean caseInsensitive) {
+        if (caseInsensitive) instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval)).toLowercase()));
+        else instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
+    }
+
+    private static boolean isCaseInsensitiveOperator(final String operator) {
+        if (operator.equals(Keywords.TRAIT_CI_EQ)) return true;
+        return false;
     }
 
 }

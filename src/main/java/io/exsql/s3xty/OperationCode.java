@@ -11,6 +11,7 @@ public enum OperationCode {
     LONG_EQ,
     DOUBLE_EQ,
     STRING_EQ,
+    STRING_CI_EQ,
     // Inequality Operations
     BOOLEAN_NE,
     LONG_NE,
