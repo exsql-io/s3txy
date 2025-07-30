@@ -34,6 +34,11 @@ public record StringArrayValue(UTF8String[] wrapped) implements Value {
     }
 
     @Override
+    public UTF8String[] toStrings() {
+        return this.wrapped;
+    }
+
+    @Override
     public @NotNull String toString() {
         return String.format("strings(%s)", Arrays.toString(this.wrapped));
     }

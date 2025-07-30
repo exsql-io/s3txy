@@ -252,6 +252,19 @@ public final class Compiler {
             case Keywords.TRAIT_REGEX:
                 instructions.add(Instruction.stringRegexpMatch());
                 break;
+            case Keywords.TRAIT_CONTAINS:
+                if (CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
+                    instructions.add(Instruction.longArrayContains());
+                } else if (CachedArrayDataAccessor.DOUBLE_ARRAY_TYPE.sameType(dataType)) {
+                    instructions.add(Instruction.doubleArrayContains());
+                } else if (CachedArrayDataAccessor.BOOLEAN_ARRAY_TYPE.sameType(dataType)) {
+                    instructions.add(Instruction.booleanArrayContains());
+                } else if (CachedArrayDataAccessor.STRING_ARRAY_TYPE.sameType(dataType)) {
+                    instructions.add(Instruction.stringArrayContains());
+                } else {
+                    instructions.add(Instruction.stringContains());
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown operator: " + operator);
         }
@@ -285,13 +298,13 @@ public final class Compiler {
 
         try {
             if (dataType != null) {
-                if (dataType.equals(DataTypes.LongType)) {
+                if (dataType.equals(DataTypes.LongType) || CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
                     instructions.add(Instruction.load(Value.longValue(tokens.sval)));
-                } else if (dataType.equals(DataTypes.DoubleType)) {
+                } else if (dataType.equals(DataTypes.DoubleType) || CachedArrayDataAccessor.DOUBLE_ARRAY_TYPE.sameType(dataType)) {
                     instructions.add(Instruction.load(Value.doubleValue(tokens.sval)));
-                } else if (dataType.equals(DataTypes.BooleanType)) {
+                } else if (dataType.equals(DataTypes.BooleanType) || CachedArrayDataAccessor.BOOLEAN_ARRAY_TYPE.sameType(dataType)) {
                     instructions.add(Instruction.load(Value.booleanValue(tokens.sval)));
-                } else if (dataType.equals(DataTypes.StringType)) {
+                } else if (dataType.equals(DataTypes.StringType) || CachedArrayDataAccessor.STRING_ARRAY_TYPE.sameType(dataType)) {
                     parseStringArgument(tokens, instructions, operator);
                 } else {
                     throw new IllegalArgumentException("Unsupported data type: " + dataType);

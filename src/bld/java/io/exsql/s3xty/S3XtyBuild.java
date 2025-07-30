@@ -33,6 +33,14 @@ public class S3XtyBuild extends Project {
         compileOperation()
                 .compileOptions()
                 .addModules("jdk.incubator.vector");
+
+        testOperation()
+                .javaOptions()
+                .addModules("jdk.incubator.vector");
+
+        runOperation()
+                .javaOptions()
+                .addModules("jdk.incubator.vector");
     }
 
     public static void main(final String[] args) {

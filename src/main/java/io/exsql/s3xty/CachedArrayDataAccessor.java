@@ -13,10 +13,11 @@ import java.util.OptionalLong;
 
 public class CachedArrayDataAccessor {
 
-    private static final DataType STRING_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.StringType);
-    private static final DataType LONG_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.LongType);
-    private static final DataType DOUBLE_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.DoubleType);
-    private static final DataType BOOLEAN_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.BooleanType);
+    public static final DataType STRING_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.StringType);
+    public static final DataType LONG_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.LongType);
+    public static final DataType DOUBLE_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.DoubleType);
+    public static final DataType BOOLEAN_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.BooleanType);
+
     private static final UTF8String DEFAULT_ARRAY_VALUE_DELIMITER = UTF8String.fromString(",");
 
     private final Object2ObjectOpenHashMap<UTF8String, Value> cache;
@@ -69,6 +70,42 @@ public class CachedArrayDataAccessor {
         }
 
         return false;
+    }
+
+    public UTF8String[] getStrings(final UTF8String key) {
+        var value = this.get(key);
+        if (value != null && !value.isNull()) {
+            return value.toStrings();
+        }
+
+        return new UTF8String[0];
+    }
+
+    public long[] getLongs(final UTF8String key) {
+        var value = this.get(key);
+        if (value != null && !value.isNull()) {
+            return value.toLongs();
+        }
+
+        return new long[0];
+    }
+
+    public double[] getDoubles(final UTF8String key) {
+        var value = this.get(key);
+        if (value != null && !value.isNull()) {
+            return value.toDoubles();
+        }
+
+        return new double[0];
+    }
+
+    public boolean[] getBooleans(final UTF8String key) {
+        var value = this.get(key);
+        if (value != null && !value.isNull()) {
+            return value.toBooleans();
+        }
+
+        return new boolean[0];
     }
 
     private record ArrayDataEntry(UTF8String key, Value value) {}

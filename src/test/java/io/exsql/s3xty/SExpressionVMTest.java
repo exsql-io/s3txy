@@ -18,7 +18,9 @@ public class SExpressionVMTest {
 
     private final static Map<String, String> environment = Map.of();
 
-    private final StructType schema = StructType.fromDDL("long LONG, double DOUBLE, boolean BOOLEAN");
+    private final StructType schema = StructType.fromDDL(
+            "long LONG, double DOUBLE, boolean BOOLEAN, strings ARRAY<STRING>, longs ARRAY<LONG>, doubles ARRAY<DOUBLE>, booleans ARRAY<BOOLEAN>"
+    );
 
     private final Object2ObjectOpenHashMap<UTF8String, DataType> fieldTypes = SchemaHelper.convert(schema);
 
@@ -776,6 +778,61 @@ public class SExpressionVMTest {
         }));
 
         var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-regex \"string\" \"(?i)(string)\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitContainsString() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains \"string\" \"str\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitContainsStringArray() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("strings"), UTF8String.fromString("string1,string2")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains \"strings\" \"string1\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitContainsLongArray() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("longs"), UTF8String.fromString("1,2")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains \"longs\" \"1\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitContainsDoubleArray() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("doubles"), UTF8String.fromString("1.5,2.5")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains \"doubles\" \"1.5\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitContainsBooleanArray() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("booleans"), UTF8String.fromString("true,false")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains \"booleans\" \"true\")"));
         vm.evaluate(bag);
         assertTrue(vm.result());
     }

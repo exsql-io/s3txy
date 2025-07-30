@@ -154,6 +154,26 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) i
         return create(OperationCode.STRING_REGEXP_MATCH);
     }
 
+    public static Instruction stringContains() {
+        return create(OperationCode.STRING_CONTAINS);
+    }
+
+    public static Instruction stringArrayContains() {
+        return create(OperationCode.STRING_ARRAY_CONTAINS);
+    }
+
+    public static Instruction longArrayContains() {
+        return create(OperationCode.LONG_ARRAY_CONTAINS);
+    }
+
+    public static Instruction doubleArrayContains() {
+        return create(OperationCode.DOUBLE_ARRAY_CONTAINS);
+    }
+
+    public static Instruction booleanArrayContains() {
+        return create(OperationCode.BOOLEAN_ARRAY_CONTAINS);
+    }
+
     public static Instruction not() {
         return create(OperationCode.NOT);
     }

@@ -20,15 +20,19 @@ public interface Value {
     }
 
     default long[] toLongs() {
-        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to long");
+        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to long list");
     }
 
     default double[] toDoubles() {
-        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to double");
+        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to double list");
     }
 
     default boolean[] toBooleans() {
-        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to boolean");
+        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to boolean list");
+    }
+
+    default UTF8String[] toStrings() {
+        throw new UnsupportedOperationException("Cannot convert " + this.getClass().getSimpleName() + " to string list");
     }
 
     default boolean isNull() {
@@ -79,16 +83,32 @@ public interface Value {
         return new StringArrayValue(wrapped.splitSQL(delimiter, 0));
     }
 
+    static StringArrayValue stringArrayValue(final UTF8String[] wrapped) {
+        return new StringArrayValue(wrapped);
+    }
+
     static LongArrayValue longArrayValue(final UTF8String delimiter, final UTF8String wrapped) {
         return new LongArrayValue(new StringArrayValue(wrapped.splitSQL(delimiter, 0)).toLongs());
+    }
+
+    static LongArrayValue longArrayValue(final long[] wrapped) {
+        return new LongArrayValue(wrapped);
     }
 
     static DoubleArrayValue doubleArrayValue(final UTF8String delimiter, final UTF8String wrapped) {
         return new DoubleArrayValue(new StringArrayValue(wrapped.splitSQL(delimiter, 0)).toDoubles());
     }
 
+    static DoubleArrayValue doubleArrayValue(final double[] wrapped) {
+        return new DoubleArrayValue(wrapped);
+    }
+
     static BooleanArrayValue booleanArrayValue(final UTF8String delimiter, final UTF8String wrapped) {
         return new BooleanArrayValue(new StringArrayValue(wrapped.splitSQL(delimiter, 0)).toBooleans());
+    }
+
+    static BooleanArrayValue booleanArrayValue(final boolean[] wrapped) {
+        return new BooleanArrayValue(wrapped);
     }
 
 }

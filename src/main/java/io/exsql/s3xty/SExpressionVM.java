@@ -181,6 +181,18 @@ public final class SExpressionVM {
                 }
             } else if (dataType.equals(DataTypes.BooleanType)) {
                 vm.push(Value.booleanValue(vm.getValueBag().getBoolean(((StringValue) fieldPosition).wrapped())));
+            } else if (CachedArrayDataAccessor.STRING_ARRAY_TYPE.sameType(dataType)) {
+                var strings = vm.getValueBag().getStrings(((StringValue) fieldPosition).wrapped());
+                vm.push(Value.stringArrayValue(strings));
+            } else if (CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
+                var longs = vm.getValueBag().getLongs(((StringValue) fieldPosition).wrapped());
+                vm.push(Value.longArrayValue(longs));
+            } else if (CachedArrayDataAccessor.DOUBLE_ARRAY_TYPE.sameType(dataType)) {
+                var doubles = vm.getValueBag().getDoubles(((StringValue) fieldPosition).wrapped());
+                vm.push(Value.doubleArrayValue(doubles));
+            } else if (CachedArrayDataAccessor.BOOLEAN_ARRAY_TYPE.sameType(dataType)) {
+                var booleans = vm.getValueBag().getBooleans(((StringValue) fieldPosition).wrapped());
+                vm.push(Value.booleanArrayValue(booleans));
             } else {
                 var string = vm.getValueBag().get(((StringValue) fieldPosition).wrapped());
                 vm.push(Objects.requireNonNullElseGet(string, Value::nullValue));
@@ -244,6 +256,11 @@ public final class SExpressionVM {
         registerBinaryOperation(OperationCode.DOUBLE_GE, Operation::nullSafeDoubleGe);
         registerBinaryOperation(OperationCode.STRING_GE, (v1, v2) -> Operation.nullSafeStringGe(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.STRING_REGEXP_MATCH, Operation::stringRegexMatch);
+        registerBinaryOperation(OperationCode.STRING_CONTAINS, Operation::nullSafeStringContains);
+        registerBinaryOperation(OperationCode.STRING_ARRAY_CONTAINS, Operation::nullSafeStringArrayContains);
+        registerBinaryOperation(OperationCode.LONG_ARRAY_CONTAINS, Operation::nullSafeLongArrayContains);
+        registerBinaryOperation(OperationCode.DOUBLE_ARRAY_CONTAINS, Operation::nullSafeDoubleArrayContains);
+        registerBinaryOperation(OperationCode.BOOLEAN_ARRAY_CONTAINS, Operation::nullSafeBooleanArrayContains);
     }
     
     /**

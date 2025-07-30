@@ -134,6 +134,60 @@ public final class Operation {
         return ((RegexpValue) left).matches(right);
     }
 
+    public static boolean nullSafeStringContains(final Value right, final Value left) {
+        if (!(left instanceof StringValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+        return ((StringValue) left).wrapped().contains(((StringValue) right).wrapped());
+    }
+
+    public static boolean nullSafeStringArrayContains(final Value right, final Value left) {
+        if (!(left instanceof StringArrayValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+
+        var target = ((StringValue) right).wrapped();
+        for (var string: ((StringArrayValue) left).wrapped()) {
+            if (target.equals(string)) return true;
+        }
+
+        return false;
+    }
+
+    public static boolean nullSafeLongArrayContains(final Value right, final Value left) {
+        if (!(left instanceof LongArrayValue)) return false;
+        if (!(right instanceof LongValue)) return false;
+
+        var target = ((LongValue) right).wrapped();
+        for (var l: ((LongArrayValue) left).wrapped()) {
+            if (l == target) return true;
+        }
+
+        return false;
+    }
+
+    public static boolean nullSafeDoubleArrayContains(final Value right, final Value left) {
+        if (!(left instanceof DoubleArrayValue)) return false;
+        if (!(right instanceof DoubleValue)) return false;
+
+        var target = ((DoubleValue) right).wrapped();
+        for (var d: ((DoubleArrayValue) left).wrapped()) {
+            if (d == target) return true;
+        }
+
+        return false;
+    }
+
+    public static boolean nullSafeBooleanArrayContains(final Value right, final Value left) {
+        if (!(left instanceof BooleanArrayValue)) return false;
+        if (!(right instanceof BooleanValue)) return false;
+
+        var target = ((BooleanValue) right).wrapped();
+        for (var b: ((BooleanArrayValue) left).wrapped()) {
+            if (b == target) return true;
+        }
+
+        return false;
+    }
+
     private static int nullSafeUTF8StringCompare(final UTF8String right, final UTF8String left) {
         if (right == null) return -1;
         if (left == null) return 1;
