@@ -39,7 +39,7 @@ public final class Compiler {
     
     /**
      * Compiles an array of S-expressions into a single program.
-     * Each expression is compiled and its result is stored in the results array at the corresponding index.
+     * Each expression is compiled and its result is stored in the result array at the corresponding index.
      *
      * @param schema the schema of the data
      * @param expressions the array of S-expressions to compile
@@ -69,7 +69,7 @@ public final class Compiler {
                     parseExpression(tokens, instructions, schema);
                 }
                 
-                // Store the result at the corresponding index in the results array
+                // Store the result at the corresponding index in the result array
                 instructions.add(Instruction.storeResult(i));
             }
 
