@@ -140,6 +140,12 @@ public final class Operation {
         return ((StringValue) left).wrapped().contains(((StringValue) right).wrapped());
     }
 
+    public static boolean nullSafeStringCiContains(final Value right, final Value left) {
+        if (!(left instanceof StringValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+        return ((StringValue) left).toLowercase().wrapped().contains(((StringValue) right).toLowercase().wrapped());
+    }
+
     public static boolean nullSafeStringArrayContains(final Value right, final Value left) {
         if (!(left instanceof StringArrayValue)) return false;
         if (!(right instanceof StringValue)) return false;

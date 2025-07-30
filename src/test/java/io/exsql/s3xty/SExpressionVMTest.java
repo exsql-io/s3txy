@@ -794,6 +794,17 @@ public class SExpressionVMTest {
     }
 
     @Test
+    void verifyTraitCiContainsString() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-ci-contains \"string\" \"STR\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
     void verifyTraitContainsStringArray() {
         var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("strings"), UTF8String.fromString("string1,string2")})

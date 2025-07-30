@@ -13,6 +13,9 @@ public enum OperationCode {
     STRING_EQ,
     STRING_CI_EQ,
     STRING_REGEXP_MATCH,
+    // Contains Operations
+    STRING_CONTAINS,
+    STRING_CI_CONTAINS,
     // Inequality Operations
     BOOLEAN_NE,
     LONG_NE,
@@ -44,7 +47,6 @@ public enum OperationCode {
     // Nullability
     IS_NOT_NULL,
     // Collection operations
-    STRING_CONTAINS,
     STRING_ARRAY_CONTAINS,
     LONG_ARRAY_CONTAINS,
     DOUBLE_ARRAY_CONTAINS,

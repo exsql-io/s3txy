@@ -158,6 +158,10 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) i
         return create(OperationCode.STRING_CONTAINS);
     }
 
+    public static Instruction stringCiContains() {
+        return create(OperationCode.STRING_CI_CONTAINS);
+    }
+
     public static Instruction stringArrayContains() {
         return create(OperationCode.STRING_ARRAY_CONTAINS);
     }

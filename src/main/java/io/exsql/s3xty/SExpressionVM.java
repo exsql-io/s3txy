@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * A virtual machine for evaluating S-expressions.
@@ -231,7 +230,7 @@ public final class SExpressionVM {
         });
 
         // Register unary operations
-        registerUnaryOperation(OperationCode.IS_NOT_NULL, Operation::isNotNull);
+        instructionHandlers.put(OperationCode.IS_NOT_NULL, (vm, program, instruction) -> vm.push(Value.booleanValue(Operation.isNotNull(vm.pop()))));
 
         // Register binary operations
         registerBinaryOperation(OperationCode.LONG_EQ, Operation::nullSafeLongEq);
@@ -257,6 +256,7 @@ public final class SExpressionVM {
         registerBinaryOperation(OperationCode.STRING_GE, (v1, v2) -> Operation.nullSafeStringGe(v1, v2, useVectorAPI));
         registerBinaryOperation(OperationCode.STRING_REGEXP_MATCH, Operation::stringRegexMatch);
         registerBinaryOperation(OperationCode.STRING_CONTAINS, Operation::nullSafeStringContains);
+        registerBinaryOperation(OperationCode.STRING_CI_CONTAINS, Operation::nullSafeStringCiContains);
         registerBinaryOperation(OperationCode.STRING_ARRAY_CONTAINS, Operation::nullSafeStringArrayContains);
         registerBinaryOperation(OperationCode.LONG_ARRAY_CONTAINS, Operation::nullSafeLongArrayContains);
         registerBinaryOperation(OperationCode.DOUBLE_ARRAY_CONTAINS, Operation::nullSafeDoubleArrayContains);
@@ -271,16 +271,6 @@ public final class SExpressionVM {
      */
     private void registerBinaryOperation(final OperationCode opCode, final BiFunction<Value, Value, Boolean> operation) {
         instructionHandlers.put(opCode, (vm, program, instruction) -> vm.push(Value.booleanValue(operation.apply(vm.pop(), vm.pop()))));
-    }
-
-    /**
-     * Registers a unary operation handler.
-     *
-     * @param opCode the operation code
-     * @param operation the operation function that takes one values and returns a boolean result
-     */
-    private void registerUnaryOperation(final OperationCode opCode, final Function<Value, Boolean> operation) {
-        instructionHandlers.put(opCode, (vm, program, instruction) -> vm.push(Value.booleanValue(operation.apply(vm.pop()))));
     }
 
     /**
