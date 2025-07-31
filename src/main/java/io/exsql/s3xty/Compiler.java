@@ -282,6 +282,17 @@ public final class Compiler {
                     instructions.add(Instruction.stringIn());
                 }
                 break;
+            case Keywords.TRAIT_CONTAINS_ANY:
+                if (CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
+                    instructions.add(Instruction.longArrayIntersectsNonEmpty());
+                } else if (CachedArrayDataAccessor.DOUBLE_ARRAY_TYPE.sameType(dataType)) {
+                    instructions.add(Instruction.doubleArrayIntersectsNonEmpty());
+                } else if (CachedArrayDataAccessor.BOOLEAN_ARRAY_TYPE.sameType(dataType)) {
+                    instructions.add(Instruction.booleanArrayIntersectsNonEmpty());
+                } else {
+                    instructions.add(Instruction.stringArrayIntersectsNonEmpty());
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown operator: " + operator);
         }
@@ -315,7 +326,7 @@ public final class Compiler {
 
         try {
             if (dataType != null) {
-                if (operator.equals(Keywords.TRAIT_IN)) {
+                if (operator.equals(Keywords.TRAIT_IN) || operator.equals(Keywords.TRAIT_CONTAINS_ANY)) {
                     parseMultiValueArgument(tokens, instructions, dataType);
                 } else if (dataType.equals(DataTypes.LongType) || CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
                     instructions.add(Instruction.load(Value.longValue(tokens.sval)));
@@ -357,11 +368,11 @@ public final class Compiler {
 
         tokens.nextToken(); // consume )
 
-        if (DataTypes.LongType.equals(dataType)) {
+        if (DataTypes.LongType.equals(dataType) || CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
             instructions.add(Instruction.load(Value.longArrayValue(elements.stream().mapToLong(UTF8String::toLongExact).toArray())));
-        } else if (DataTypes.DoubleType.equals(dataType)) {
+        } else if (DataTypes.DoubleType.equals(dataType) || CachedArrayDataAccessor.DOUBLE_ARRAY_TYPE.sameType(dataType)) {
             instructions.add(Instruction.load(Value.doubleArrayValue(elements.stream().mapToDouble(element -> Double.parseDouble(element.toString())).toArray())));
-        } else if (DataTypes.BooleanType.equals(dataType)) {
+        } else if (DataTypes.BooleanType.equals(dataType) || CachedArrayDataAccessor.BOOLEAN_ARRAY_TYPE.sameType(dataType)) {
             var booleans = new boolean[elements.size()];
             for (int i = 0; i < elements.size(); i++) {
                 booleans[i] = Boolean.parseBoolean(elements.get(i).toString());

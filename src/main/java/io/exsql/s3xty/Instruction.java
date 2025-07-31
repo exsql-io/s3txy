@@ -198,6 +198,22 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) i
         return create(OperationCode.BOOLEAN_IN);
     }
 
+    public static Instruction stringArrayIntersectsNonEmpty() {
+        return create(OperationCode.STRING_ARRAY_INTERSECTS_NON_EMPTY);
+    }
+
+    public static Instruction longArrayIntersectsNonEmpty() {
+        return create(OperationCode.LONG_ARRAY_INTERSECTS_NON_EMPTY);
+    }
+
+    public static Instruction doubleArrayIntersectsNonEmpty() {
+        return create(OperationCode.DOUBLE_ARRAY_INTERSECTS_NON_EMPTY);
+    }
+
+    public static Instruction booleanArrayIntersectsNonEmpty() {
+        return create(OperationCode.BOOLEAN_ARRAY_INTERSECTS_NON_EMPTY);
+    }
+
     public static Instruction not() {
         return create(OperationCode.NOT);
     }

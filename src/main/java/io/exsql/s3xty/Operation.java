@@ -206,6 +206,58 @@ public final class Operation {
         return false;
     }
 
+    public static boolean nullSafeStringArrayIntersectsNonEmpty(final Value right, final Value left) {
+        if (!(left instanceof StringArrayValue)) return false;
+        if (!(right instanceof StringArrayValue)) return false;
+
+        for (var l: ((StringArrayValue) left).wrapped()) {
+            for (var r: ((StringArrayValue) right).wrapped()) {
+                if (l.equals(r)) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean nullSafeLongArrayIntersectsNonEmpty(final Value right, final Value left) {
+        if (!(left instanceof LongArrayValue)) return false;
+        if (!(right instanceof LongArrayValue)) return false;
+
+        for (var l: ((LongArrayValue) left).wrapped()) {
+            for (var r: ((LongArrayValue) right).wrapped()) {
+                if (l == r) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean nullSafeDoubleArrayIntersectsNonEmpty(final Value right, final Value left) {
+        if (!(left instanceof DoubleArrayValue)) return false;
+        if (!(right instanceof DoubleArrayValue)) return false;
+
+        for (var l: ((DoubleArrayValue) left).wrapped()) {
+            for (var r: ((DoubleArrayValue) right).wrapped()) {
+                if (l == r) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean nullSafeBooleanArrayIntersectsNonEmpty(final Value right, final Value left) {
+        if (!(left instanceof BooleanArrayValue)) return false;
+        if (!(right instanceof BooleanArrayValue)) return false;
+
+        for (var l: ((BooleanArrayValue) left).wrapped()) {
+            for (var r: ((BooleanArrayValue) right).wrapped()) {
+                if (l == r) return true;
+            }
+        }
+
+        return false;
+    }
+
     private static int nullSafeUTF8StringCompare(final UTF8String right, final UTF8String left) {
         if (right == null) return -1;
         if (left == null) return 1;

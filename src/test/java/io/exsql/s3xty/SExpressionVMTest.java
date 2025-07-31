@@ -903,4 +903,48 @@ public class SExpressionVMTest {
         assertTrue(vm.result());
     }
 
+    @Test
+    void verifyTraitContainsAnyLong() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("longs"), UTF8String.fromString("1,3")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains-any \"longs\" (\"1\" \"2\"))"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitContainsAnyDouble() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("doubles"), UTF8String.fromString("1.5,3.5")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains-any \"doubles\" (\"1.5\" \"2.5\"))"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitContainsAnyBoolean() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("booleans"), UTF8String.fromString("true,true")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains-any \"booleans\" (\"true\" \"false\"))"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitContainsAnyString() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("strings"), UTF8String.fromString("string1,string3")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-contains-any \"strings\" (\"string1\" \"string2\"))"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
 }
