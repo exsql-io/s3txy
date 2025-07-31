@@ -859,4 +859,48 @@ public class SExpressionVMTest {
         assertTrue(vm.result());
     }
 
+    @Test
+    void verifyTraitInLong() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-in \"long\" (\"1\" \"2\"))"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitInDouble() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("1.5")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-in \"double\" (\"1.5\" \"2.5\"))"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitInBoolean() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-in \"boolean\" (\"true\" \"false\"))"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
+    void verifyTraitInString() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-in \"string\" (\"string\" \"str\"))"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
 }

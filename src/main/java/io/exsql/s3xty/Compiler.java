@@ -271,6 +271,17 @@ public final class Compiler {
             case Keywords.TRAIT_ELEMENT_CONTAINS:
                 instructions.add(Instruction.stringArrayElementContains());
                 break;
+            case Keywords.TRAIT_IN:
+                if (DataTypes.LongType.equals(dataType)) {
+                    instructions.add(Instruction.longIn());
+                } else if (DataTypes.DoubleType.equals(dataType)) {
+                    instructions.add(Instruction.doubleIn());
+                } else if (DataTypes.BooleanType.equals(dataType)) {
+                    instructions.add(Instruction.booleanIn());
+                } else {
+                    instructions.add(Instruction.stringIn());
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown operator: " + operator);
         }
@@ -304,7 +315,9 @@ public final class Compiler {
 
         try {
             if (dataType != null) {
-                if (dataType.equals(DataTypes.LongType) || CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
+                if (operator.equals(Keywords.TRAIT_IN)) {
+                    parseMultiValueArgument(tokens, instructions, dataType);
+                } else if (dataType.equals(DataTypes.LongType) || CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
                     instructions.add(Instruction.load(Value.longValue(tokens.sval)));
                 } else if (dataType.equals(DataTypes.DoubleType) || CachedArrayDataAccessor.DOUBLE_ARRAY_TYPE.sameType(dataType)) {
                     instructions.add(Instruction.load(Value.doubleValue(tokens.sval)));
@@ -330,6 +343,33 @@ public final class Compiler {
             case Keywords.TRAIT_CI_EQ -> instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval)).toLowercase()));
             case Keywords.TRAIT_REGEX -> instructions.add(Instruction.load(Value.regexpValue(tokens.sval)));
             default -> instructions.add(Instruction.load(Value.stringValue(UTF8String.fromString(tokens.sval))));
+        }
+    }
+
+    private static void parseMultiValueArgument(final StreamTokenizer tokens, final List<Instruction> instructions, final DataType dataType) throws IOException {
+        tokens.nextToken(); // consume (
+
+        var elements = new ArrayList<UTF8String>();
+        while (tokens.ttype != ')') {
+            elements.add(UTF8String.fromString(tokens.sval));
+            tokens.nextToken();
+        }
+
+        tokens.nextToken(); // consume )
+
+        if (DataTypes.LongType.equals(dataType)) {
+            instructions.add(Instruction.load(Value.longArrayValue(elements.stream().mapToLong(UTF8String::toLongExact).toArray())));
+        } else if (DataTypes.DoubleType.equals(dataType)) {
+            instructions.add(Instruction.load(Value.doubleArrayValue(elements.stream().mapToDouble(element -> Double.parseDouble(element.toString())).toArray())));
+        } else if (DataTypes.BooleanType.equals(dataType)) {
+            var booleans = new boolean[elements.size()];
+            for (int i = 0; i < elements.size(); i++) {
+                booleans[i] = Boolean.parseBoolean(elements.get(i).toString());
+            }
+
+            instructions.add(Instruction.load(Value.booleanArrayValue(booleans)));
+        } else {
+            instructions.add(Instruction.load(Value.stringArrayValue(elements.toArray(new UTF8String[0]))));
         }
     }
 

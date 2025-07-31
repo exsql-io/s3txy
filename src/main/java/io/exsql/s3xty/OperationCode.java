@@ -13,6 +13,11 @@ public enum OperationCode {
     STRING_EQ,
     STRING_CI_EQ,
     STRING_REGEXP_MATCH,
+    // In Operations
+    BOOLEAN_IN,
+    LONG_IN,
+    DOUBLE_IN,
+    STRING_IN,
     // Contains Operations
     STRING_CONTAINS,
     STRING_CI_CONTAINS,

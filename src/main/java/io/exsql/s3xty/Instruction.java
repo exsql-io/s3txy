@@ -182,12 +182,27 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) i
         return create(OperationCode.BOOLEAN_ARRAY_CONTAINS);
     }
 
+    public static Instruction longIn() {
+        return create(OperationCode.LONG_IN);
+    }
+
+    public static Instruction stringIn() {
+        return create(OperationCode.STRING_IN);
+    }
+
+    public static Instruction doubleIn() {
+        return create(OperationCode.DOUBLE_IN);
+    }
+
+    public static Instruction booleanIn() {
+        return create(OperationCode.BOOLEAN_IN);
+    }
+
     public static Instruction not() {
         return create(OperationCode.NOT);
     }
-    
+
     // Control flow instructions
-    
     
     public static Instruction jumpIfTrue(final int targetIndex) {
         return create(OperationCode.JUMP_IF_TRUE, Value.longValue(targetIndex));
