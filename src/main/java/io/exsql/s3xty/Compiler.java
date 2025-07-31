@@ -268,6 +268,9 @@ public final class Compiler {
             case Keywords.TRAIT_CI_CONTAINS:
                 instructions.add(Instruction.stringCiContains());
                 break;
+            case Keywords.TRAIT_ELEMENT_CONTAINS:
+                instructions.add(Instruction.stringArrayElementContains());
+                break;
             default:
                 throw new IllegalArgumentException("Unknown operator: " + operator);
         }

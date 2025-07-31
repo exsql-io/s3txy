@@ -158,6 +158,18 @@ public final class Operation {
         return false;
     }
 
+    public static boolean nullSafeStringArrayElementContains(final Value right, final Value left) {
+        if (!(left instanceof StringArrayValue)) return false;
+        if (!(right instanceof StringValue)) return false;
+
+        var target = ((StringValue) right).wrapped();
+        for (var string: ((StringArrayValue) left).wrapped()) {
+            if (string.contains(target)) return true;
+        }
+
+        return false;
+    }
+
     public static boolean nullSafeLongArrayContains(final Value right, final Value left) {
         if (!(left instanceof LongArrayValue)) return false;
         if (!(right instanceof LongValue)) return false;

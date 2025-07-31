@@ -816,6 +816,17 @@ public class SExpressionVMTest {
     }
 
     @Test
+    void verifyTraitElementContainsStringArray() {
+        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+                new GenericInternalRow(new Object[]{UTF8String.fromString("strings"), UTF8String.fromString("string1,string2")})
+        }));
+
+        var vm = new SExpressionVM(environment, Compiler.compile(schema, "(trait-element-contains \"strings\" \"ring\")"));
+        vm.evaluate(bag);
+        assertTrue(vm.result());
+    }
+
+    @Test
     void verifyTraitContainsLongArray() {
         var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("longs"), UTF8String.fromString("1,2")})

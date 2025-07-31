@@ -48,6 +48,7 @@ public enum OperationCode {
     IS_NOT_NULL,
     // Collection operations
     STRING_ARRAY_CONTAINS,
+    STRING_ARRAY_ELEMENT_CONTAINS,
     LONG_ARRAY_CONTAINS,
     DOUBLE_ARRAY_CONTAINS,
     BOOLEAN_ARRAY_CONTAINS,

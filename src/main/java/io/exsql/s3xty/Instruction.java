@@ -166,6 +166,10 @@ public record Instruction(OperationCode operation, @Nullable Value[] operands) i
         return create(OperationCode.STRING_ARRAY_CONTAINS);
     }
 
+    public static Instruction stringArrayElementContains() {
+        return create(OperationCode.STRING_ARRAY_ELEMENT_CONTAINS);
+    }
+
     public static Instruction longArrayContains() {
         return create(OperationCode.LONG_ARRAY_CONTAINS);
     }

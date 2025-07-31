@@ -258,6 +258,7 @@ public final class SExpressionVM {
         registerBinaryOperation(OperationCode.STRING_CONTAINS, Operation::nullSafeStringContains);
         registerBinaryOperation(OperationCode.STRING_CI_CONTAINS, Operation::nullSafeStringCiContains);
         registerBinaryOperation(OperationCode.STRING_ARRAY_CONTAINS, Operation::nullSafeStringArrayContains);
+        registerBinaryOperation(OperationCode.STRING_ARRAY_ELEMENT_CONTAINS, Operation::nullSafeStringArrayElementContains);
         registerBinaryOperation(OperationCode.LONG_ARRAY_CONTAINS, Operation::nullSafeLongArrayContains);
         registerBinaryOperation(OperationCode.DOUBLE_ARRAY_CONTAINS, Operation::nullSafeDoubleArrayContains);
         registerBinaryOperation(OperationCode.BOOLEAN_ARRAY_CONTAINS, Operation::nullSafeBooleanArrayContains);
