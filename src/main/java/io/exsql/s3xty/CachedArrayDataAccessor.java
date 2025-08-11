@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.OptionalDouble;
 import java.util.OptionalLong;
 
-public class CachedArrayDataAccessor {
+public class CachedArrayDataAccessor implements TraitAccessor {
 
     public static final DataType STRING_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.StringType);
     public static final DataType LONG_ARRAY_TYPE = DataTypes.createArrayType(DataTypes.LongType);

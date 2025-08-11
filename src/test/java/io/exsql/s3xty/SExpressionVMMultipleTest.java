@@ -22,7 +22,7 @@ public class SExpressionVMMultipleTest {
 
     @Test
     void verifyMultipleExpressions() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("2.5")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")})
@@ -52,7 +52,7 @@ public class SExpressionVMMultipleTest {
     @Test
     void verifyComplexExpressions() {
         // Let's simplify this test to focus on the core functionality
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("10")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("2.5")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
@@ -98,7 +98,7 @@ public class SExpressionVMMultipleTest {
 
     @Test
     void verifyLargeNumberOfExpressions() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")})
         }));
 

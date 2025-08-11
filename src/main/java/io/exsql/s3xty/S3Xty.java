@@ -46,7 +46,7 @@ public class S3Xty {
             LOGGER.info("Starting evaluation of {} expressions", expressions.length);
             var globalStopWatch = Stopwatch.createStarted();
             for (var evaluation = 0; evaluation < evaluations; evaluation++) {
-                var thread = new Thread(createTask(evaluation, program.fork(), initializeBags(fieldTypes, data)));
+                var thread = new Thread(createTask(evaluation, program.fork(), initializeTraitAccessors(fieldTypes, data)));
                 thread.start();
                 threads.add(thread);
             }
@@ -64,13 +64,13 @@ public class S3Xty {
         }
     }
 
-    private static @NotNull Runnable createTask(final int evaluation, final Program program, final CachedArrayDataAccessor[] bags) {
+    private static @NotNull Runnable createTask(final int evaluation, final Program program, final TraitAccessor[] accessors) {
         return () -> {
             var vm = new SExpressionVM(System.getenv(), program);
             var stopWatch = Stopwatch.createStarted();
-            for (var bag: bags) {
+            for (var accessor: accessors) {
                 vm.reset();
-                vm.evaluate(bag);
+                vm.evaluate(accessor);
             }
 
             var elapsed = stopWatch.elapsed(TimeUnit.MILLISECONDS);
@@ -84,12 +84,12 @@ public class S3Xty {
         };
     }
 
-    private static CachedArrayDataAccessor[] initializeBags(final Object2ObjectOpenHashMap<UTF8String, DataType> fieldTypes,
+    private static TraitAccessor[] initializeTraitAccessors(final Object2ObjectOpenHashMap<UTF8String, DataType> fieldTypes,
                                                             final ArrayData[] data) {
 
-        var bags = new CachedArrayDataAccessor[data.length];
+        var bags = new TraitAccessor[data.length];
         for (var i = 0; i < data.length; i++) {
-            bags[i] = new CachedArrayDataAccessor(fieldTypes, data[i]);
+            bags[i] = TraitAccessor.forArrayData(fieldTypes, data[i]);
         }
         return bags;
     }

@@ -23,7 +23,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitEqString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -35,7 +35,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyNotTraitEqString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -47,7 +47,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyNestedOrTraitEq() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
@@ -61,7 +61,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyOrMultipleTraitEq() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
@@ -75,7 +75,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyNestedAndTraitEq() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
@@ -89,7 +89,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyAndMultipleTraitEq() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("boolean"), UTF8String.fromString("true")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("1")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
@@ -103,7 +103,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitNeString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -115,7 +115,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyNotTraitNeString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -127,7 +127,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyAndWithAllTrueConditions() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("3")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("test")})
         }));
@@ -147,7 +147,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyOrWithAllFalseConditions() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("5")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("test")})
         }));
@@ -174,7 +174,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyComplexNestedExpression() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("long"), UTF8String.fromString("10")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("double"), UTF8String.fromString("2.5")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("test")}),
@@ -192,7 +192,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLtString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("string")})
         }));
 
@@ -204,7 +204,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLtStringWithDifferentValues() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
         }));
 
@@ -216,7 +216,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitEqWithNullString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), null})
         }));
 
@@ -228,7 +228,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitEqWithEmptyString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
         }));
 
@@ -240,7 +240,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLtWithEmptyString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
         }));
 
@@ -252,7 +252,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGtString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("zebra")})
         }));
 
@@ -264,7 +264,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGtStringWithSameValue() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
         }));
 
@@ -276,7 +276,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLeString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
         }));
 
@@ -288,7 +288,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLeStringWithDifferentValues() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("apple")})
         }));
 
@@ -300,7 +300,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGeString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("banana")})
         }));
 
@@ -312,7 +312,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGeStringWithDifferentValues() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("banana")})
         }));
 
@@ -324,7 +324,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitEqWithDifferentLengthStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string1"), UTF8String.fromString("short")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string2"), UTF8String.fromString("longer_string")})
         }));
@@ -344,7 +344,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLtWithCommonPrefixStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("prefix_a")})
         }));
 
@@ -356,7 +356,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitEqWithVeryLongStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("i am a really long string and I know you know it")})
         }));
 
@@ -368,7 +368,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLtWithVeryLongStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("i am a really long string and I know you know it")})
         }));
 
@@ -380,7 +380,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLeWithNullString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), null})
         }));
 
@@ -392,7 +392,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGtWithNullString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), null})
         }));
 
@@ -404,7 +404,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGeWithNullString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), null})
         }));
 
@@ -416,7 +416,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLeWithEmptyString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
         }));
 
@@ -428,7 +428,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGtWithEmptyString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
         }));
 
@@ -440,7 +440,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGeWithEmptyString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("")})
         }));
 
@@ -452,7 +452,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLeWithDifferentLengthStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string1"), UTF8String.fromString("short")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string2"), UTF8String.fromString("longer_string")})
         }));
@@ -472,7 +472,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGtWithDifferentLengthStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string1"), UTF8String.fromString("short")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string2"), UTF8String.fromString("longer_string")})
         }));
@@ -492,7 +492,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGeWithDifferentLengthStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string1"), UTF8String.fromString("short")}),
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string2"), UTF8String.fromString("longer_string")})
         }));
@@ -512,7 +512,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLeWithCommonPrefixStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("prefix_a")})
         }));
 
@@ -524,7 +524,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGtWithCommonPrefixStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("prefix_b")})
         }));
 
@@ -536,7 +536,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGeWithCommonPrefixStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("prefix_a")})
         }));
 
@@ -548,7 +548,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitLeWithVeryLongStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("i am a really long string and I know you know it")})
         }));
 
@@ -560,7 +560,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGtWithVeryLongStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("z am a really long string and I know you know it")})
         }));
 
@@ -572,7 +572,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitGeWithVeryLongStrings() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("i am a really long string and I know you know it")})
         }));
 
@@ -584,7 +584,7 @@ public class SExpressionVMVectorTest {
 
     @Test
     void verifyTraitCiEqString() {
-        var bag = new CachedArrayDataAccessor(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
+        var bag = TraitAccessor.forArrayData(fieldTypes, ArrayData.toArrayData(new GenericInternalRow[] {
                 new GenericInternalRow(new Object[]{UTF8String.fromString("string"), UTF8String.fromString("STRING")})
         }));
 

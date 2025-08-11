@@ -25,7 +25,7 @@ public final class SExpressionVM {
     private int sp = 0;
 
     // Execution context
-    private CachedArrayDataAccessor valueBag;
+    private TraitAccessor accessor;
     
     // Instruction handlers
     private final Map<OperationCode, InstructionHandler> instructionHandlers = new HashMap<>();
@@ -48,14 +48,14 @@ public final class SExpressionVM {
     /**
      * Evaluates a program with the given value bag.
      *
-     * @param bag the value bag to use for field lookups
+     * @param accessor the value bag to use for field lookups
      */
-    public void evaluate(final CachedArrayDataAccessor bag) {
+    public void evaluate(final TraitAccessor accessor) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Evaluating: \n{}", program);
         }
 
-        this.valueBag = bag;
+        this.accessor = accessor;
 
         while (program.hasNext()) {
             var instruction = program.next();
@@ -99,7 +99,7 @@ public final class SExpressionVM {
      */
     public void reset() {
         this.sp = 0;
-        this.valueBag = null;
+        this.accessor = null;
     }
 
     /**
@@ -133,8 +133,8 @@ public final class SExpressionVM {
      *
      * @return the value bag
      */
-    public CachedArrayDataAccessor getValueBag() {
-        return this.valueBag;
+    public TraitAccessor getAccessor() {
+        return this.accessor;
     }
     
     /**
@@ -165,35 +165,35 @@ public final class SExpressionVM {
             var dataType = ((FieldTypeValue) fieldType).dataType();
 
             if (dataType.equals(DataTypes.LongType)) {
-                var optional = vm.getValueBag().getLong(((StringValue) fieldPosition).wrapped());
+                var optional = vm.getAccessor().getLong(((StringValue) fieldPosition).wrapped());
                 if (optional.isPresent()) {
                     vm.push(Value.longValue(optional.getAsLong()));
                 } else {
                     vm.push(Value.nullValue());
                 }
             } else if (dataType.equals(DataTypes.DoubleType)) {
-                var optional = vm.getValueBag().getDouble(((StringValue) fieldPosition).wrapped());
+                var optional = vm.getAccessor().getDouble(((StringValue) fieldPosition).wrapped());
                 if (optional.isPresent()) {
                     vm.push(Value.doubleValue(optional.getAsDouble()));
                 } else {
                     vm.push(Value.nullValue());
                 }
             } else if (dataType.equals(DataTypes.BooleanType)) {
-                vm.push(Value.booleanValue(vm.getValueBag().getBoolean(((StringValue) fieldPosition).wrapped())));
+                vm.push(Value.booleanValue(vm.getAccessor().getBoolean(((StringValue) fieldPosition).wrapped())));
             } else if (CachedArrayDataAccessor.STRING_ARRAY_TYPE.sameType(dataType)) {
-                var strings = vm.getValueBag().getStrings(((StringValue) fieldPosition).wrapped());
+                var strings = vm.getAccessor().getStrings(((StringValue) fieldPosition).wrapped());
                 vm.push(Value.stringArrayValue(strings));
             } else if (CachedArrayDataAccessor.LONG_ARRAY_TYPE.sameType(dataType)) {
-                var longs = vm.getValueBag().getLongs(((StringValue) fieldPosition).wrapped());
+                var longs = vm.getAccessor().getLongs(((StringValue) fieldPosition).wrapped());
                 vm.push(Value.longArrayValue(longs));
             } else if (CachedArrayDataAccessor.DOUBLE_ARRAY_TYPE.sameType(dataType)) {
-                var doubles = vm.getValueBag().getDoubles(((StringValue) fieldPosition).wrapped());
+                var doubles = vm.getAccessor().getDoubles(((StringValue) fieldPosition).wrapped());
                 vm.push(Value.doubleArrayValue(doubles));
             } else if (CachedArrayDataAccessor.BOOLEAN_ARRAY_TYPE.sameType(dataType)) {
-                var booleans = vm.getValueBag().getBooleans(((StringValue) fieldPosition).wrapped());
+                var booleans = vm.getAccessor().getBooleans(((StringValue) fieldPosition).wrapped());
                 vm.push(Value.booleanArrayValue(booleans));
             } else {
-                var string = vm.getValueBag().get(((StringValue) fieldPosition).wrapped());
+                var string = vm.getAccessor().get(((StringValue) fieldPosition).wrapped());
                 vm.push(Objects.requireNonNullElseGet(string, Value::nullValue));
             }
         });
